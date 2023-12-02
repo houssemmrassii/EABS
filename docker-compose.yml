@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  ebas3-frontend:
+    container_name: ebas3-frontend
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "5565:80"
+    network_mode: bridge
