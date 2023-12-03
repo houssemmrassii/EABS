@@ -3,10 +3,15 @@ import { Col } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Card } from "antd";
 import classes from "./Login.module.css";
-
+import axios from "@/utils/axios/axiosInterceptor";
+import { useNavigate } from "react-router-dom";
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+    axios.post("http://localhost:5555/login", values).then((res) => {
+      localStorage.setItem("token", res.data.access_token);
+      navigate("/Dashboard");
+    });
   };
   return (
     <div className={classes.Container}>

@@ -1,6 +1,6 @@
 import React from "react";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, Layout, Menu, theme } from "antd";
+import { MenuUnfoldOutlined, MenuFoldOutlined,LogoutOutlined } from "@ant-design/icons";
+import { Affix, Button, ConfigProvider, Flex, Layout, Menu, theme } from "antd";
 import items from "../../consts/SideBar/SideBarItems";
 const { Header, Content, Footer, Sider } = Layout;
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
@@ -10,7 +10,7 @@ const Dashboard: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(true);
   return (
     <ConfigProvider
       theme={{
@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
             height: "100vh",
             position: "fixed",
             left: 0,
-            top: 0,
+            top: 65,
             bottom: 0,
             color: "#F2F6FA",
           }}
@@ -49,26 +49,55 @@ const Dashboard: React.FC = () => {
         </Sider>
         <Layout
           className="site-layout"
-          style={{
-            marginLeft: !collapsed ? 200 : 100,
-            transition: "all 0.1s ease-in-out",
-            minHeight: "100vh",
-          }}
+          // style={{
+          //  marginLeft: !collapsed ? 200 : 100,
+          //   transition: "all 0.1s ease-in-out",
+          //   minHeight: "100vh",
+          // }}
         >
-          <Header style={{ padding: 0, background: colorBgContainer }}>
-            {" "}
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-              }}
-            />
-          </Header>
-          <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+          <Affix offsetTop={0}>
+            <Header style={{ padding: 0, background: colorBgContainer }}>
+              {" "}
+              <Flex gap="middle" align="center" justify="space-between">
+                <Button
+                  type="text"
+                  icon={
+                    collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
+                  }
+                  onClick={() => setCollapsed(!collapsed)}
+                  style={{
+                    fontSize: "16px",
+                    width: 64,
+                    height: 64,
+                  }}
+                />
+                <Button
+                  type="text"
+                  icon={
+                    <LogoutOutlined />
+                  }
+                  onClick={() => {
+                    localStorage.clear()
+                    window.location.href = "/"
+                  }}
+                  style={{
+                    fontSize: "16px",
+                    width: 64,
+                    height: 64,
+                  }}
+                />
+              </Flex>
+            </Header>
+          </Affix>
+          <Content
+            style={{
+              margin: "24px 16px 0",
+              overflow: "initial",
+              marginLeft: !collapsed ? 200 : 100,
+              transition: "all 0.1s ease-in-out",
+              minHeight: "100vh",
+            }}
+          >
             <Row gutter={16}>
               <Col span={12}>
                 <Card bordered={false}>

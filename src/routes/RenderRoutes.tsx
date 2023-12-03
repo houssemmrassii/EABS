@@ -4,23 +4,32 @@ import NotFound from "../pages/NotFound/NotFound";
 const Login = lazy(() => import("../pages/Login/Login"));
 const Home = lazy(() => import("../pages/Dashboard/Dashboard"));
 
-const loader = async () => {
+const homeLoader = async () => {
   const token = await localStorage.getItem("token");
   if (!token) {
     return redirect("/");
   }
   return null;
 };
+const loginLoader = async () => {
+  const token = await localStorage.getItem("token");
+  if (token) {
+    return redirect("/Dashboard");
+  }
+  return null;
+};
+
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+    loader: loginLoader,
   },
   {
     path: "/Dashboard",
     element: <Home />,
-    loader: loader,
+    loader: homeLoader,
   },
   {
     path: "/*",
