@@ -22,3 +22,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+input::placeholder {
+  color: #00000093 !important; /* Set your desired color */
+}
