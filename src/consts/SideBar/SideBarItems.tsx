@@ -1,5 +1,6 @@
 import {
   TeamOutlined,
+  DashboardOutlined
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import React from "react";
@@ -18,7 +19,8 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuItem[] = [
-  getItem('Etablissement', 'Etab', <TeamOutlined />, [getItem('Group Etablissement', 'E1'), getItem('Etablisement', 'E2')]),
-  getItem('Reservation', 'Rez', <TeamOutlined />, [getItem('Reservation', 'R1'), getItem('Reservation', 'R2')]),
+  getItem('Tableau de bord', 'DASHBOARD', <DashboardOutlined />),
+  getItem('Etablissement', 'ETABLISSEMENT', <TeamOutlined />, [getItem('Group Etablissement', 'GROUP ETABLISSEMENT'), getItem('Etablisement', 'ETABLISSEMENT')]),
+  getItem('Reservation', 'RESERVATION', <TeamOutlined />, [getItem('Reservation', 'RESERVATION')]),
 ];
 export default items;

@@ -1,11 +1,8 @@
-// axiosInterceptor.ts
-import { message } from "antd";
+import { notification } from "antd";
 import axios, { AxiosError } from "axios";
 
-// Request interceptor
 axios.interceptors.request.use(
   (config) => {
-    // You can modify the request config here (e.g., add headers, tokens, etc.)
     return config;
   },
   (error) => {
@@ -14,8 +11,26 @@ axios.interceptors.request.use(
 );
 interface ApiResponse {
   message?: string;
-  // other fields you expect in the API response
 }
+
+const displayNotification = (
+  message: String,
+  placement:
+    | "top"
+    | "topLeft"
+    | "topRight"
+    | "bottom"
+    | "bottomLeft"
+    | "bottomRight"
+    | undefined,
+  duration: number | null | undefined
+) => {
+  notification.error({
+    message: message,
+    placement: placement,
+    duration: duration,
+  });
+};
 // Response interceptor
 axios.interceptors.response.use(
   (response) => {
@@ -25,18 +40,13 @@ axios.interceptors.response.use(
   (error: AxiosError<ApiResponse>) => {
     // You can handle errors globally here
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       const errorMessage =
         error.response.data.message || "Something went wrong";
-
-      message.error(errorMessage);
+      displayNotification(errorMessage, "bottomLeft", 3);
     } else if (error.request) {
-      // The request was made but no response was received
-      message.error(error.request);
+      displayNotification(error.request, "bottomLeft", 3);
     } else {
-      // Something happened in setting up the request that triggered an Error
-      message.error(error.message);
+      displayNotification(error.message, "bottomLeft", 3);
     }
 
     return Promise.reject(error);

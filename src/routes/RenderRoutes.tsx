@@ -4,21 +4,20 @@ import NotFound from "../pages/NotFound/NotFound";
 const Login = lazy(() => import("../pages/Login/Login"));
 const Home = lazy(() => import("../pages/Dashboard/Dashboard"));
 
-const homeLoader = async () => {
-  const token = await localStorage.getItem("token");
+const homeLoader = () => {
+  const token = localStorage.getItem("token");
   if (!token) {
     return redirect("/");
   }
   return null;
 };
-const loginLoader = async () => {
-  const token = await localStorage.getItem("token");
+const loginLoader = () => {
+  const token = localStorage.getItem("token");
   if (token) {
     return redirect("/Dashboard");
   }
   return null;
 };
-
 
 const router = createBrowserRouter([
   {
