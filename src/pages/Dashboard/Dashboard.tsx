@@ -85,7 +85,7 @@ const DashboardContent: React.FC<DashboardContentProps> = (
             alignItems: "center",
           }}
         >
-          <LoadingOutlined /> <h3 style={{marginLeft:"5px"}} >En cours de developpement   ...  </h3>
+          <LoadingOutlined  /> <h3 style={{marginLeft:"5px"}} >L'interface {props.dashboardContent} En cours de developpement   ...  </h3>
         </div>
       );
       break;

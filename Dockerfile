@@ -1,17 +1,38 @@
+# Start with the official Node.js 18 Alpine image and alias it as 'builder'
 FROM node:18-alpine3.17 as builder
+
+# Set the working directory inside the container to /app
 WORKDIR /app
+
+# Copy all files from the current directory to the /app directory in the container
 COPY . .
+
+# Run the yarn install command to install dependencies
 RUN yarn install
+
+# Run the yarn run build command to build the application
 RUN yarn run build
+
+# Start a new stage with the official Nginx Alpine image
 FROM nginx:alpine
-# Set working directory to nginx asset directory
+
+# Set the working directory inside the container to /usr/share/nginx/html
 WORKDIR /usr/share/nginx/html
-# Remove default nginx static assets
+
+# Remove all existing files in the /usr/share/nginx/html directory
 RUN rm -rf ./*
-# Copy static assets from builder stage
+
+# Remove the default configuration files
 RUN rm -rf /usr/share/nginx/html/* && rm -rf /etc/nginx/conf.d/default.conf
+
+# Copy the custom default.conf file to the Nginx configuration directory
 COPY ./default.conf /etc/nginx/conf.d/default.conf
+
+# Copy the custom nginx.conf file to the Nginx configuration directory
 COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY --from=builder /app/build .
-# Containers run nginx with global directives and daemon off
+
+# Copy the static assets from the 'builder' stage to the /usr/share/nginx/html directory
+COPY --from=builder /app/dist .
+
+# Set the entry point command for the container to start Nginx in the foreground
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
