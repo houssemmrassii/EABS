@@ -5,11 +5,14 @@ import {
   LogoutOutlined,
   DashboardOutlined,
   LoadingOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import {
   Affix,
   Button,
+  Collapse,
   ConfigProvider,
+  Divider,
   Flex,
   Layout,
   Menu,
@@ -23,9 +26,10 @@ import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Card, Col, Row, Statistic } from "antd";
 import Integral from "../../assets/svg/integral.svg";
 import { useGlobal } from "@/context/GlobalContext";
+import TableComponent from "@/components/Table/TableComponent";
+import GroupEtablissementForm from "@/components/GroupEtablissementForm/GroupEtablissementForm";
 
 interface DashboardContentProps {
-  collapsed: boolean;
   dashboardContent: string | undefined;
 }
 
@@ -35,45 +39,59 @@ const DashboardContent: React.FC<DashboardContentProps> = (
   switch (props.dashboardContent) {
     case "DASHBOARD":
       return (
-        <Content
-          style={{
-            margin: "24px 16px 0",
-            overflow: "initial",
-            marginLeft: !props.collapsed ? 200 : 100,
-            transition: "all 0.1s ease-in-out",
-            minHeight: "100vh",
-          }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Card bordered={false}>
-                <Statistic
-                  title="Active"
-                  value={11.28}
-                  precision={2}
-                  valueStyle={{ color: "#3f8600" }}
-                  prefix={<ArrowUpOutlined />}
-                  suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card bordered={false}>
-                <Statistic
-                  title="Idle"
-                  value={9.3}
-                  precision={2}
-                  valueStyle={{ color: "#cf1322" }}
-                  prefix={<ArrowDownOutlined />}
-                  suffix="%"
-                />
-              </Card>
-            </Col>
-          </Row>
-        </Content>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Card bordered={false}>
+              <Statistic
+                title="Active"
+                value={11.28}
+                precision={2}
+                valueStyle={{ color: "#3f8600" }}
+                prefix={<ArrowUpOutlined />}
+                suffix="%"
+              />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card bordered={false}>
+              <Statistic
+                title="Idle"
+                value={9.3}
+                precision={2}
+                valueStyle={{ color: "#cf1322" }}
+                prefix={<ArrowDownOutlined />}
+                suffix="%"
+              />
+            </Card>
+          </Col>
+        </Row>
       );
       break;
 
+    case "GROUP ETABLISSEMENT":
+      return (
+        <>
+          {" "}
+          <Collapse
+            expandIcon={({ isActive }) => (
+              <PlusOutlined
+                style={{ fontSize: "20px" }}
+                rotate={isActive ? 90 : 0}
+              />
+            )}
+            expandIconPosition={"right"}
+            items={[
+              {
+                key: "1",
+                label: "Ajouter un groupe établissement",
+                children: <GroupEtablissementForm />,
+              },
+            ]}
+          />
+          <Divider orientation="center" />
+          <TableComponent />
+        </>
+      );
     default:
       return (
         <div
@@ -85,7 +103,10 @@ const DashboardContent: React.FC<DashboardContentProps> = (
             alignItems: "center",
           }}
         >
-          <LoadingOutlined  /> <h3 style={{marginLeft:"5px"}} >L'interface {props.dashboardContent} En cours de developpement   ...  </h3>
+          <LoadingOutlined />{" "}
+          <h3 style={{ marginLeft: "5px" }}>
+            L'interface {props.dashboardContent} En cours de developpement ...{" "}
+          </h3>
         </div>
       );
       break;
@@ -201,10 +222,17 @@ const Dashboard: React.FC = () => {
               </Flex>
             </Header>
           </Affix>
-          <DashboardContent
-            collapsed={collapsed}
-            dashboardContent={dashboardContent}
-          />
+          <Content
+            style={{
+              margin: "26px 16px 0",
+              overflow: "initial",
+              marginLeft: !collapsed ? 220 : 100,
+              transition: "all 0.1s ease-in-out",
+              minHeight: "100vh",
+            }}
+          >
+            <DashboardContent dashboardContent={dashboardContent} />
+          </Content>
           <Footer style={{ textAlign: "center" }}>EBAS3 ©2023</Footer>
         </Layout>
       </Layout>
