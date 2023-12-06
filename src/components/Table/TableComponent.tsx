@@ -1,80 +1,51 @@
-import { SearchOutlined } from "@ant-design/icons";
-import React, { Key, useRef, useState } from "react";
+import { SearchOutlined, DeleteOutlined, EditTwoTone } from "@ant-design/icons";
+import React, { Key, useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import type { InputRef } from "antd";
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Badge, Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import type { FilterConfirmProps } from "antd/es/table/interface";
-
+import { getEtablissementGroupsService } from "../../services/getablissement/Etablissement";
+import GroupEtablissementForm from "../GroupEtablissementForm/GroupEtablissementForm";
+import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
 interface DataType {
-  key: string;
+  key: number;
   name: string;
   status: boolean;
 }
 
 type DataIndex = keyof DataType;
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "Groupe M&L",
-    status: true,
-  },
-  {
-    key: "2",
-    name: "Mtour",
-    status: true,
-  },
-  {
-    key: "3",
-    name: "Hotels",
-    status: false,
-  },
-  {
-    key: "4",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "5",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "6",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "7",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "8",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "9",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "10",
-    name: "test",
-    status: false,
-  },
-  {
-    key: "11",
-    name: "test",
-    status: false,
-  },
-];
-
 const TableComponent: React.FC = () => {
   const [searchText, setSearchText] = useState("");
+  const { tableData, setTableData } = useEtablissementContext();
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [loading, setloading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getEtablissementGroupsService();
+        let groups = result.groups;
+        let prepareGroups = groups.map(
+          (group: { id: number; name: string; active: boolean }) => ({
+            key: group.id,
+            name: group.name,
+            status: group.active,
+          })
+        );
+        setTableData(prepareGroups);
+        setTimeout(() => {
+          setloading(false);
+        }, 500);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error if needed
+      }
+    };
+
+    fetchData();
+  }, []);
   const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (
@@ -95,7 +66,12 @@ const TableComponent: React.FC = () => {
     setSearchText("");
     confirm();
   };
-
+  const handleDelete = (key: React.Key) => {
+    if (tableData) {
+      const newData = tableData.filter((item) => item.key !== key);
+      setTableData(newData);
+    }
+  };
   const getColumnSearchProps = (
     dataIndex: DataIndex,
     searchTitle: String
@@ -216,15 +192,49 @@ const TableComponent: React.FC = () => {
       onFilter: (value: boolean | Key, record: DataType) =>
         record.status === value,
       render: (_, { status }) => (
-        <Tag color={status ? "blue" : "red"}>
+        /*  <Tag color={status ? "blue" : "red"}>
           {status ? "Activé" : "Désactivé"}
-        </Tag>
+        </Tag> */
+        <Badge
+          status={status ? "success" : "error"}
+          text={status ? "Activé" : "Désactivé"}
+        />
       ),
     },
+    {
+      title: "Paramètres",
+      dataIndex: "Paramètres",
+      render: (_, record: { key: React.Key }) =>
+        tableData ? (
+          tableData.length >= 1 ? (
+            <>
+              <EditTwoTone onClick={() => handleDelete(record.key)} />{" "}
+              <Popconfirm
+                title="Vous êtes sûr de supprimer?"
+                onConfirm={() => handleDelete(record.key)}
+              >
+                <DeleteOutlined />
+              </Popconfirm>
+            </>
+          ) : null
+        ) : null,
+    },
   ];
-
   return (
-    <Table columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
+    <>
+      <GroupEtablissementForm />
+      <Table
+        columns={columns}
+        loading={loading}
+        rowSelection={{}}
+        expandable={{
+          expandedRowRender: (record: DataType) => <p>Créer 06/12/2023</p>,
+        }}
+        dataSource={tableData}
+        pagination={{ pageSize: 10 }}
+        footer={() => ""}
+      />
+    </>
   );
 };
 

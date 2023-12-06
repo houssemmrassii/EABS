@@ -27,6 +27,7 @@
       "@utils": ["./src/utils"],
       "@pages": ["./src/pages"],
       "@consts": ["./src/consts"],
+      "@services": ["./src/services"],
     }
   },
   "include": ["src"],
