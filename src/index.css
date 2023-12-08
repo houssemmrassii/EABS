@@ -25,3 +25,7 @@ body {
 input::placeholder {
   color: #00000093 !important; /* Set your desired color */
 }
+
+.ant-collapse-header-text {
+  color: black;
+}

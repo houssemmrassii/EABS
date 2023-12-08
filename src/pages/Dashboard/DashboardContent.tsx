@@ -1,7 +1,8 @@
-import TableComponent from "@/components/Table/TableComponent";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Card, Col, Row, Statistic } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import GroupEtabTableComponent from "../GroupEtablissement/GroupEtabTableComponent";
+import EtabTableComponent from "../Etablissement/EtabTableComponent";
 interface DashboardContentProps {
   dashboardContent: string | undefined;
 }
@@ -41,8 +42,10 @@ const DashboardContent: React.FC<DashboardContentProps> = (
       );
       break;
 
+    case "ETABLISSEMENT":
+      return <EtabTableComponent />;
     case "GROUP ETABLISSEMENT":
-      return <TableComponent />;
+      return <GroupEtabTableComponent />;
     default:
       return (
         <div

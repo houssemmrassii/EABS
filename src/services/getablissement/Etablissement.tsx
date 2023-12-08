@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "../../utils/axios/axiosInterceptor";
 
 export const getEtablissementGroupsService = async () => {
@@ -32,6 +33,47 @@ export const postEtablissementGroupsService = async (payload: any) => {
       }
     );
 
+    return response.data;
+  } catch (error) {
+    console.error("Erreur:", error);
+    throw error; // Re-throw the error to let the caller handle it
+  }
+};
+export const deleteEtablissementGroupsService = async (id_group: number) => {
+  try {
+    const token = localStorage.getItem("token") || "";
+    const response = await axios.delete(
+      `${import.meta.env.VITE_APP_BASE_URL}/groups/${id_group}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    message.success(response.data.message);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur:", error);
+    throw error; // Re-throw the error to let the caller handle it
+  }
+};
+
+export const updateEtablissementGroupsService = async (
+  id_group: number,
+  payload: object
+) => {
+  try {
+    const token = localStorage.getItem("token") || "";
+    const response = await axios.put(
+      `${import.meta.env.VITE_APP_BASE_URL}/groups/${id_group}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    message.success(response.data.message);
     return response.data;
   } catch (error) {
     console.error("Erreur:", error);

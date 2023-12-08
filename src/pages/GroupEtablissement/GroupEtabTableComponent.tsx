@@ -2,12 +2,16 @@ import { SearchOutlined, DeleteOutlined, EditTwoTone } from "@ant-design/icons";
 import React, { Key, useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import type { InputRef } from "antd";
-import { Badge, Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Badge, Button, Flex, Input, Popconfirm, Space, Table } from "antd";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import type { FilterConfirmProps } from "antd/es/table/interface";
-import { getEtablissementGroupsService } from "../../services/getablissement/Etablissement";
-import GroupEtablissementForm from "../GroupEtablissementForm/GroupEtablissementForm";
+import {
+  deleteEtablissementGroupsService,
+  getEtablissementGroupsService,
+} from "../../services/getablissement/Etablissement";
+import GroupEtablissementForm from "./GroupEtablissementForm/GroupEtablissementForm";
 import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
+import UpdateEtablissementForm from "./UpdateEtablissementForm/UpdateEtablissementForm";
 interface DataType {
   key: number;
   name: string;
@@ -16,12 +20,12 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const TableComponent: React.FC = () => {
+const GroupEtabTableComponent: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const { tableData, setTableData } = useEtablissementContext();
   const [searchedColumn, setSearchedColumn] = useState("");
   const [loading, setloading] = useState(true);
-
+  const [editing, setEditing] = useState<Key | null>();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,10 +70,18 @@ const TableComponent: React.FC = () => {
     setSearchText("");
     confirm();
   };
-  const handleDelete = (key: React.Key) => {
+  const handleDelete = async (key: React.Key) => {
     if (tableData) {
-      const newData = tableData.filter((item) => item.key !== key);
-      setTableData(newData);
+      try {
+        await deleteEtablissementGroupsService(key as number);
+        setTimeout(() => {
+          const newData = tableData.filter((item) => item.key !== key);
+          setTableData(newData);
+        }, 500);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error if needed
+      }
     }
   };
   const getColumnSearchProps = (
@@ -207,15 +219,17 @@ const TableComponent: React.FC = () => {
       render: (_, record: { key: React.Key }) =>
         tableData ? (
           tableData.length >= 1 ? (
-            <>
-              <EditTwoTone onClick={() => handleDelete(record.key)} />{" "}
+            <Flex justify={"space-around"} align={"center"}>
+              <EditTwoTone onClick={() => setEditing(record.key)} />{" "}
               <Popconfirm
                 title="Vous êtes sûr de supprimer?"
                 onConfirm={() => handleDelete(record.key)}
+                okText="Confirmer"
+                cancelText="Annuler"
               >
                 <DeleteOutlined />
               </Popconfirm>
-            </>
+            </Flex>
           ) : null
         ) : null,
     },
@@ -223,19 +237,19 @@ const TableComponent: React.FC = () => {
   return (
     <>
       <GroupEtablissementForm />
-      <Table
-        columns={columns}
-        loading={loading}
-        rowSelection={{}}
-        expandable={{
-          expandedRowRender: (record: DataType) => <p>Créer 06/12/2023</p>,
-        }}
-        dataSource={tableData}
-        pagination={{ pageSize: 10 }}
-        footer={() => ""}
-      />
+      {editing && (
+        <UpdateEtablissementForm idRecord={editing} setEditing={setEditing} />
+      )}
+        <Table
+          columns={columns}
+          loading={loading}
+          rowSelection={{}}
+          dataSource={tableData}
+          pagination={{ pageSize: 15 }}
+          footer={() => ""}
+        />
     </>
   );
 };
 
-export default TableComponent;
+export default GroupEtabTableComponent;
