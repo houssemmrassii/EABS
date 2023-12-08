@@ -4,16 +4,11 @@ import React, { createContext, useContext, ReactNode, Key } from "react";
 interface DataType {
   key: number;
   name: string;
-  groupName: string;
-  Fractionnement: string;
-  NumTel:string,
-  Email:string,
-  Fax:string,
   status: boolean;
 }
 
 // Define the shape of your authentication context
-interface EtablissementContextProps {
+interface GroupEtablissementContextProps {
   tableData: DataType[] | undefined;
   addToTableData: (newData: DataType) => void;
   setTableData: React.Dispatch<React.SetStateAction<DataType[]>>;
@@ -23,15 +18,15 @@ interface EtablissementContextProps {
 
 // Create the context with an initial state
 const EtablissementContext = createContext<
-  EtablissementContextProps | undefined
+  GroupEtablissementContextProps | undefined
 >(undefined);
 
 // Create a helper hook to access the context in your components
-export const useEtablissementContext = () => {
+export const useGroupEtablissementContext = () => {
   const context = useContext(EtablissementContext);
   if (!context) {
     throw new Error(
-      "useEtablissementContext must be used within an AuthProvider"
+      "useGroupEtablissementContext must be used within an AuthProvider"
     );
   }
   return context;
@@ -40,7 +35,7 @@ interface GlobalProviderProps {
   children: ReactNode;
 }
 // Create a provider component to wrap your app with
-export const EtablisementProvider: React.FC<GlobalProviderProps> = ({
+export const GroupEtablisementProvider: React.FC<GlobalProviderProps> = ({
   children,
 }) => {
   const [tableData, setTableData] = React.useState<DataType[]>([]);
@@ -62,7 +57,7 @@ export const EtablisementProvider: React.FC<GlobalProviderProps> = ({
       return prev;
     });
   };
-  const contextValue: EtablissementContextProps = {
+  const contextValue: GroupEtablissementContextProps = {
     tableData,
     addToTableData,
     setTableData,

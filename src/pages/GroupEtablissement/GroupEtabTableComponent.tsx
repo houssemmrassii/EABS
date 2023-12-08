@@ -8,10 +8,10 @@ import type { FilterConfirmProps } from "antd/es/table/interface";
 import {
   deleteEtablissementGroupsService,
   getEtablissementGroupsService,
-} from "../../services/getablissement/Etablissement";
+} from "../../services/GroupEtablissement/GroupEtablissementServices";
 import GroupEtablissementForm from "./GroupEtablissementForm/GroupEtablissementForm";
-import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
-import UpdateEtablissementForm from "./UpdateEtablissementForm/UpdateEtablissementForm";
+import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext/GroupEtablissementContext";
+import UpdateGroupEtablissementForm from "./UpdateGroupEtablissementForm/UpdateGroupEtablissementForm";
 interface DataType {
   key: number;
   name: string;
@@ -22,7 +22,7 @@ type DataIndex = keyof DataType;
 
 const GroupEtabTableComponent: React.FC = () => {
   const [searchText, setSearchText] = useState("");
-  const { tableData, setTableData } = useEtablissementContext();
+  const { tableData, setTableData } = useGroupEtablissementContext();
   const [searchedColumn, setSearchedColumn] = useState("");
   const [loading, setloading] = useState(true);
   const [editing, setEditing] = useState<Key | null>();
@@ -238,7 +238,7 @@ const GroupEtabTableComponent: React.FC = () => {
     <>
       <GroupEtablissementForm />
       {editing && (
-        <UpdateEtablissementForm idRecord={editing} setEditing={setEditing} />
+        <UpdateGroupEtablissementForm idRecord={editing} setEditing={setEditing} />
       )}
         <Table
           columns={columns}

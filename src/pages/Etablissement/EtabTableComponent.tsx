@@ -5,13 +5,10 @@ import type { InputRef } from "antd";
 import { Badge, Button, Flex, Input, Popconfirm, Space, Table } from "antd";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import type { FilterConfirmProps } from "antd/es/table/interface";
-import {
-  deleteEtablissementGroupsService,
-  getEtablissementGroupsService,
-} from "../../services/getablissement/Etablissement";
-import GroupEtablissementForm from "./GroupEtablissementForm/GroupEtablissementForm";
+import { deleteEtablissementGroupsService } from "../../services/GroupEtablissement/GroupEtablissementServices";
 import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
-import UpdateEtablissementForm from "./UpdateEtablissementForm/UpdateEtablissementForm";
+import { getEtablissementService } from "@/services/Etablissement/EtablissementServices";
+import EtablissementForm from "./EtablissementForm/EtablissementForm";
 interface DataType {
   key: number;
   name: string;
@@ -29,16 +26,30 @@ const EtabTableComponent: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getEtablissementGroupsService();
-        let groups = result.groups;
-        let prepareGroups = groups.map(
-          (group: { id: number; name: string; active: boolean }) => ({
-            key: group.id,
-            name: group.name,
-            status: group.active,
+        const result = await getEtablissementService();
+        let etablissements = result.etablissements;
+        let prepareEtablissements = etablissements.map(
+          (etablissement: {
+            id: number;
+            name: string;
+            active: boolean;
+            group_data: { name: string };
+            fractionnement_data: { name: string };
+            num_telephone: string;
+            email: string;
+            num_fax: string;
+          }) => ({
+            key: etablissement?.id,
+            name: etablissement?.name,
+            status: etablissement?.active,
+            groupName: etablissement?.group_data.name,
+            Fractionnement: etablissement?.fractionnement_data.name,
+            NumTel: etablissement?.num_telephone,
+            Email: etablissement?.email,
+            Fax: etablissement?.num_fax,
           })
         );
-        setTableData(prepareGroups);
+        setTableData(prepareEtablissements);
         setTimeout(() => {
           setloading(false);
         }, 500);
@@ -178,18 +189,48 @@ const EtabTableComponent: React.FC = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Groupe établissement",
+      title: "Établissements",
       dataIndex: "name",
       key: "name",
-      width: "90%",
+      width: "15%",
       // sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name", "Groupe établissement"),
+      ...getColumnSearchProps("name", "Établissements"),
+    },
+    {
+      title: "Groupe Établissement",
+      dataIndex: "groupName",
+      key: "groupName",
+      width: "15%",
+    },
+    {
+      title: "Fractionnement",
+      dataIndex: "Fractionnement",
+      key: "Fractionnement",
+      width: "15%",
+    },
+    {
+      title: "Num. tél",
+      dataIndex: "NumTel",
+      key: "NumTel",
+      width: "15%",
+    },
+    {
+      title: "Email",
+      dataIndex: "Email",
+      key: "Email",
+      width: "15%",
+    },
+    {
+      title: "Fax",
+      dataIndex: "Fax",
+      key: "Fax",
+      width: "15%",
     },
     {
       title: "Statut",
       dataIndex: "status",
       key: "status",
-      width: "10%",
+      width: "15%",
       filters: [
         {
           text: "Activé",
@@ -236,18 +277,18 @@ const EtabTableComponent: React.FC = () => {
   ];
   return (
     <>
-      <GroupEtablissementForm />
-      {editing && (
+      <EtablissementForm />
+      {/* {editing && (
         <UpdateEtablissementForm idRecord={editing} setEditing={setEditing} />
-      )}
-        <Table
-          columns={columns}
-          loading={loading}
-          rowSelection={{}}
-          dataSource={tableData}
-          pagination={{ pageSize: 15 }}
-          footer={() => ""}
-        />
+      )} */}
+      <Table
+        columns={columns}
+        loading={loading}
+        rowSelection={{}}
+        dataSource={tableData}
+        pagination={{ pageSize: 15 }}
+        footer={() => ""}
+      />
     </>
   );
 };

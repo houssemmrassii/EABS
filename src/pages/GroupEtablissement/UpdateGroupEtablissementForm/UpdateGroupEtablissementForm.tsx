@@ -12,8 +12,8 @@ import {
 import { EditOutlined } from "@ant-design/icons";
 import React, { Key, useEffect, useState } from "react";
 import { BuildOutlined } from "@ant-design/icons";
-import { updateEtablissementGroupsService } from "@/services/getablissement/Etablissement";
-import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
+import { updateEtablissementGroupsService } from "@/services/GroupEtablissement/GroupEtablissementServices";
+import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext/GroupEtablissementContext";
 
 interface UpdateEtablissementFormProps {
   idRecord: Key | undefined;
@@ -26,12 +26,12 @@ interface DataType {
   name: string;
   status: boolean;
 }
-const UpdateEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
+const UpdateGroupEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
   idRecord,
   setEditing,
 }) => {
   const [active, setActive] = useState(true);
-  const { updateRecord, getRecord } = useEtablissementContext();
+  const { updateRecord, getRecord } = useGroupEtablissementContext();
   const [recordData, setRecordData] = useState<DataType>();
 
   useEffect(() => {
@@ -178,4 +178,4 @@ const UpdateEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
   );
 };
 
-export default UpdateEtablissementForm;
+export default UpdateGroupEtablissementForm;

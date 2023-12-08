@@ -12,11 +12,11 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { BuildOutlined } from "@ant-design/icons";
-import { postEtablissementGroupsService } from "@/services/getablissement/Etablissement";
-import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
+import { postEtablissementGroupsService } from "@/services/GroupEtablissement/GroupEtablissementServices";
+import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext/GroupEtablissementContext";
 const GroupEtablissementForm: React.FC = () => {
   const [active, setActive] = useState(false);
-  const { addToTableData } = useEtablissementContext();
+  const { addToTableData } = useGroupEtablissementContext();
   const [form] = Form.useForm();
   const resetAndClose = () => {
     form.resetFields();

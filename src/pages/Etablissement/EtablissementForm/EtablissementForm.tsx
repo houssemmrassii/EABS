@@ -8,15 +8,17 @@ import {
   Collapse,
   Divider,
   message,
+  InputNumber,
+  Flex,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { BuildOutlined } from "@ant-design/icons";
-import { postEtablissementGroupsService } from "@/services/getablissement/Etablissement";
-import { useEtablissementContext } from "@/context/EtablissementContext/EtablissementContext";
-const GroupEtablissementForm: React.FC = () => {
+import { postEtablissementGroupsService } from "@/services/GroupEtablissement/GroupEtablissementServices";
+import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext/GroupEtablissementContext";
+const EtablissementForm: React.FC = () => {
   const [active, setActive] = useState(false);
-  const { addToTableData } = useEtablissementContext();
+  const { addToTableData } = useGroupEtablissementContext();
   const [form] = Form.useForm();
   const resetAndClose = () => {
     form.resetFields();
@@ -58,7 +60,7 @@ const GroupEtablissementForm: React.FC = () => {
         items={[
           {
             key: "1",
-            label: "Ajouter un groupe établissement",
+            label: "Ajouter un établissement",
             children: (
               <Form
                 layout="vertical"
@@ -68,29 +70,106 @@ const GroupEtablissementForm: React.FC = () => {
                 onFinish={onFinish}
                 form={form}
               >
-                <Row
-                  gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-                  style={{ display: "flex", justifyContent: "center" }}
-                >
-                  <Col className="gutter-row" span={6}>
+                <Row>
+                  <Col span={12}>
                     <Form.Item
-                      label="Group établissement :"
+                      label="Établissement:"
                       name="name"
                       rules={[
                         {
                           required: true,
-                          message: "Veuillez saisir le nom du groupe!",
+                          message:
+                            "Veuillez saisir le nom du l'établissement !",
                         },
                       ]}
                     >
                       <Input
                         size="large"
                         prefix={<BuildOutlined />}
-                        placeholder="Nom du groupe"
+                        placeholder="Nom établissement"
                       />
                     </Form.Item>
                   </Col>
-                  <Col className="gutter-row" span={6}>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      name="idGroup"
+                      label="Group établissement:"
+                      required
+                    >
+                      <Select
+                        size="large"
+                        defaultValue={1}
+                        options={[
+                          {
+                            label: "Par nuitée",
+                            value: 1,
+                          },
+                        ]}
+                      />
+                    </Form.Item>{" "}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item name="region" label="Régions:" required>
+                      <Select size="large" options={[]} />
+                    </Form.Item>{" "}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item name="department" label="Départements:" required>
+                      <Select size="large" options={[]} />
+                    </Form.Item>{" "}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item name="ville" label="Ville:" required>
+                      <Select size="large" options={[]} />
+                    </Form.Item>{" "}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Code Postal:"
+                      name="codePostal"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir le code postal !",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        size="large"
+                        placeholder="Nom établissement"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Adresse:"
+                      name="adress"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir l'adress' !",
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
                     <Form.Item name="active" label="État :">
                       <Select
                         size="large"
@@ -113,7 +192,7 @@ const GroupEtablissementForm: React.FC = () => {
                   gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
                   style={{ display: "flex", justifyContent: "flex-end" }}
                 >
-                  <Col className="gutter-row">
+                  <Col>
                     <Form.Item>
                       <Button
                         onClick={resetAndClose}
@@ -127,7 +206,7 @@ const GroupEtablissementForm: React.FC = () => {
                       </Button>
                     </Form.Item>
                   </Col>
-                  <Col className="gutter-row" span={4}>
+                  <Col span={4}>
                     <Form.Item>
                       <Button
                         type="primary"
@@ -153,4 +232,4 @@ const GroupEtablissementForm: React.FC = () => {
   );
 };
 
-export default GroupEtablissementForm;
+export default EtablissementForm;
