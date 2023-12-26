@@ -1,59 +1,61 @@
-import React, { Key } from "react";
-import { EditOutlined, BuildOutlined } from "@ant-design/icons";
-import { Button, Row, Form, Input, Col, Select, Collapse, Divider } from "antd";
+import React from "react";
+import {
+  Button,
+  Row,
+  Form,
+  Input,
+  Col,
+  Select,
+  Collapse,
+  Divider,
+  message,
+  InputNumber,
+  Typography,
+  Flex,
+  Space,
+} from "antd";
 
-import { updateEtablissementGroupsService } from "@services/EtablissementGroup";
-import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext";
+import { PlusOutlined, BuildOutlined } from "@ant-design/icons";
 
-interface UpdateEtablissementFormProps {
-  idRecord: Key | undefined;
-  setEditing: React.Dispatch<
-    React.SetStateAction<React.Key | null | undefined>
-  >;
-}
-interface DataType {
-  key: number;
-  name: string;
-  status: boolean;
-}
-const UpdateEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
-  idRecord,
-  setEditing,
-}) => {
-  const [active, setActive] = useState(true);
-  const { updateRecord, getRecord } = useGroupEtablissementContext();
-  const [recordData, setRecordData] = useState<DataType>();
+import { useGroupEtablissementContext } from "@context/GroupEtablissementContext";
+import {
+  postEtablissementService,
+  updateEtablissementService,
+} from "@services/Etablissement";
+import {
+  getDepartementsByRegion,
+  getRegions,
+  getVillesByDepartment,
+} from "@/services/Factory";
 
-  useEffect(() => {
-    if (idRecord) {
-      let record = getRecord(idRecord);
-      setRecordData(record);
-      form.setFieldsValue({
-        name: record?.name,
-        active: record?.status,
-      });
-    }
-  }, []);
+// type Props = {
+//   dataSource: TypeChambreDataType[];
+//   setDataSource: (data: TypeChambreDataType[]) => void;
+//   recordData: TypeChambreDataType | undefined;
+//   setEditing: React.Dispatch<React.SetStateAction<TypeChambreDataType | null>>;
+// };
 
+const UpdateEtablissementForm: React.FC = (props) => {
+  // const {record, setRecords} = props;
+  const [cities, setCities] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [active, setActive] = useState(false);
+  const { addToTableData } = useGroupEtablissementContext();
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
     form.resetFields();
     setActive(false);
-    setEditing(null);
   };
 
   const onFinish = async (values: any) => {
     try {
-      await updateEtablissementGroupsService(idRecord as number, values);
-      updateRecord(idRecord as Key, {
-        key: idRecord as number,
-        name: values.name,
-        status: values.active,
-      });
-      setTimeout(() => {
-        resetAndClose();
-      }, 500);
+      // let result = await updateEtablissementService(record?.id,values);
+      // setTimeout(() => {
+      //   resetAndClose();
+      // }, 500);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle the error if needed
@@ -63,18 +65,78 @@ const UpdateEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
   const callback = () => {
     setActive(!active);
   };
+
+  const handleChangeRegion = async (value: any) => {
+    try {
+      const data = await getDepartementsByRegion(value);
+      const temp = data?.map((item: any) => {
+        return {
+          label: item?.name,
+          value: item?.id,
+        };
+      });
+
+      setDepartments(temp);
+    } catch (error) {}
+  };
+
+  const handleChangeDepartment = async (value: any) => {
+    try {
+      const data = await getVillesByDepartment(value);
+      const temp = data?.map((item: any) => {
+        return {
+          label: item?.name,
+          value: item?.id,
+        };
+      });
+
+      setCities(temp);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    async function fetchRegions() {
+      try {
+        const data = await getRegions();
+
+        const temp = data?.map((item: any) => {
+          return {
+            label: item?.name,
+            value: item?.id,
+          };
+        });
+
+        setRegions(temp);
+        // form.setFieldsValue({...record});
+        // setLoading(false);
+      } catch (error) {
+        return message.error((error as Error)?.message);
+      }
+    }
+    fetchRegions();
+  }, []);
+
   return (
     <div>
       <Collapse
-        expandIcon={() => <EditOutlined style={{ fontSize: "20px" }} />}
+        expandIcon={({ isActive }) => (
+          <PlusOutlined
+            style={{ fontSize: "20px" }}
+            rotate={isActive ? 90 : 0}
+          />
+        )}
         activeKey={active ? "1" : "0"}
         onChange={callback}
         expandIconPosition={"right"}
-        collapsible="disabled"
         items={[
           {
             key: "1",
-            label: `Edition de ${recordData?.name}`,
+            label: (
+              <Typography.Text strong>
+                Modifier
+                {/* {record?.name}  */}
+              </Typography.Text>
+            ),
             children: (
               <Form
                 layout="vertical"
@@ -84,32 +146,187 @@ const UpdateEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
                 onFinish={onFinish}
                 form={form}
               >
-                <Row
-                  gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-                  style={{ display: "flex", justifyContent: "center" }}
-                >
-                  <Col className="gutter-row" span={6}>
+                <Row gutter={24}>
+                  <Col span={8}>
                     <Form.Item
-                      label="Group établissement :"
+                      label="Établissement:"
                       name="name"
                       rules={[
                         {
                           required: true,
-                          message: "Veuillez saisir le nom du groupe!",
+                          message:
+                            "Veuillez saisir le nom du l'établissement !",
                         },
                       ]}
                     >
                       <Input
-                        size="large"
                         prefix={<BuildOutlined />}
-                        placeholder="Nom du groupe"
+                        placeholder="Nom établissement"
                       />
                     </Form.Item>
                   </Col>
-                  <Col className="gutter-row" span={6}>
+
+                  <Col span={8}>
+                    <Form.Item
+                      name="idGroup"
+                      label="Group établissement:"
+                      required
+                    >
+                      <Select
+                        defaultValue={1}
+                        options={[
+                          {
+                            label: "Par nuitée",
+                            value: 1,
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
+                    <Form.Item name="region" label="Régions" required>
+                      <Select options={regions} onChange={handleChangeRegion} />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
+                    <Form.Item name="department" label="Départements" required>
+                      <Select
+                        onChange={handleChangeDepartment}
+                        options={departments}
+                        disabled={departments?.length === 0}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
+                    <Form.Item name="ville" label="Ville" required>
+                      <Select
+                        options={cities}
+                        disabled={cities?.length === 0}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
+                    <Form.Item
+                      label="Code Postal:"
+                      name="codePostal"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir le code postal !",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Nom établissement"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
+                    <Form.Item
+                      label="Adresse:"
+                      name="adress"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir l'adress' !",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="E-mail"
+                      name="email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir l'email !",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Num. de tél."
+                      name="num_tel"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir le Num. de tél. !",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Portable" name="portable">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Portable" name="portable">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Fax" name="fax">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Siret" name="siret">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Immatriculation" name="immatricule">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Code NAF" name="code_naf">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="TVA intra-communautaire" name="tva_intra">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
+                    <Form.Item
+                      label="Facture calculée"
+                      name="facture_calc"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez selectionner Facture calculée !",
+                        },
+                      ]}
+                    >
+                      <Select>
+                        <Select.Option value="Par nuitée">
+                          Par nuitée
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={8}>
                     <Form.Item name="active" label="État :">
                       <Select
-                        size="large"
                         defaultValue={true}
                         options={[
                           {
@@ -125,39 +342,63 @@ const UpdateEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
                     </Form.Item>{" "}
                   </Col>
                 </Row>
-                <Row
-                  gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-                  style={{ display: "flex", justifyContent: "flex-end" }}
-                >
-                  <Col className="gutter-row">
-                    <Form.Item>
-                      <Button
-                        onClick={resetAndClose}
-                        className="login-form-button"
-                        style={{
-                          width: "100%",
-                        }}
-                        danger
-                      >
-                        Annuler
-                      </Button>
+                <Divider orientation="center">
+                  Coordonnées bancaires (facultatif)
+                </Divider>
+                <Row gutter={24}>
+                  <Col span={8}>
+                    <Form.Item label="Banque" name="banque">
+                      <Input />
                     </Form.Item>
                   </Col>
-                  <Col className="gutter-row" span={4}>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="login-form-button"
-                        style={{
-                          width: "100%",
-                        }}
-                      >
-                        Confirmer
-                      </Button>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Adresse de la banque"
+                      name="banque_adress"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Code Banque" name="code_banque">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Code Guichet" name="code_guichet">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Compte" name="compte">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Code IBAN" name="iban">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Code BIC" name="bic">
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
+
+                <Flex justify="center">
+                  <Space>
+                    <Form.Item>
+                      <Button onClick={resetAndClose}>Annuler</Button>
+                    </Form.Item>
+
+                    <Form.Item>
+                      <Button type="primary" htmlType="submit">
+                        Ajouter
+                      </Button>
+                    </Form.Item>
+                  </Space>
+                </Flex>
               </Form>
             ),
           },
