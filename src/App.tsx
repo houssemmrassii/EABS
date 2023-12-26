@@ -1,20 +1,32 @@
 import React from "react";
-import { AuthProvider } from "./context/AuthContext/AuthContext";
-import Routes from "./routes";
-import { GlobalProvider } from "./context/GlobalContext/GlobalContext";
-import { GroupEtablisementProvider } from "./context/GroupEtablissementContext/GroupEtablissementContext";
-import { EtablisementProvider } from "./context/EtablissementContext/EtablissementContext";
+import { AuthProvider } from "./context/AuthContext";
+import routes from "./routes";
+import { GlobalProvider } from "./context/GlobalContext";
+import { GroupEtablisementProvider } from "./context/GroupEtablissementContext";
+import { EtablisementProvider } from "./context/EtablissementContext";
+import { BrowserRouter as Router } from "react-router-dom";
+import frFR from "antd/locale/fr_FR";
+import { ConfigProvider } from "antd";
+
+const Routes = () => {
+  return useRoutes(routes);
+};
+
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <GlobalProvider>
-        <GroupEtablisementProvider>
-        <EtablisementProvider>
-          <Routes />
-        </EtablisementProvider>
-        </GroupEtablisementProvider>
-      </GlobalProvider>
-    </AuthProvider>
+    <ConfigProvider locale={frFR}>
+      <Router>
+        <AuthProvider>
+          <GlobalProvider>
+            <GroupEtablisementProvider>
+              <EtablisementProvider>
+                <Routes />
+              </EtablisementProvider>
+            </GroupEtablisementProvider>
+          </GlobalProvider>
+        </AuthProvider>
+      </Router>
+    </ConfigProvider>
   );
 };
 

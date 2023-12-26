@@ -1,0 +1,9 @@
+.Container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to top, #60B7E4, #B9EEFA);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
