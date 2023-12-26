@@ -9,10 +9,12 @@ import { useNavigate } from "react-router-dom";
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const onFinish = (values: any) => {
-    axios.post(`${import.meta.env.VITE_APP_BASE_URL}/login`, values).then((res) => {
-      localStorage.setItem("token", res.data.access_token);
-      navigate("/Dashboard");
-    });
+    axios
+      .post(`${import.meta.env.VITE_APP_BASE_URL}/login`, values)
+      .then((res) => {
+        localStorage.setItem("token", res.data.access_token);
+        navigate("/Dashboard");
+      });
   };
 
   return (
