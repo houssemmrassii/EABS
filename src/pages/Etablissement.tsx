@@ -166,7 +166,6 @@ const Etablissement: React.FC = () => {
       <Table
         columns={columns}
         loading={loading}
-        rowSelection={{}}
         dataSource={tableData}
         pagination={{ pageSize: 15 }}
         footer={() => ""}

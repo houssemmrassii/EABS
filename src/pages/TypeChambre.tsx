@@ -28,16 +28,65 @@ const TypeChambre: React.FC = () => {
       title: "Type de pension",
       dataIndex: "type_pension",
       key: "type_pension",
+      filters: [
+        {
+          text: "Demi-pension",
+          value: "Demi-pension",
+        },
+        {
+          text: "Pension complète",
+          value: "Pension complète",
+        },
+      ],
+      onFilter: (value, record) => record.type_pension === value,
     },
     {
       title: "Achat",
       dataIndex: "modalite_achat",
       key: "modalite_achat",
+      filters: [
+        {
+          text: "Standard",
+          value: "Standard",
+        },
+        {
+          text: "Par Pax",
+          value: "Par Pax",
+        },
+        {
+          text: "Forfaitaire",
+          value: "Forfaitaire",
+        },
+        {
+          text: "Par mois",
+          value: "Par mois",
+        },
+      ],
+      onFilter: (value, record) => record.modalite_achat === value,
     },
     {
       title: "Vente",
       dataIndex: "modalite_vente",
       key: "modalite_vente",
+      filters: [
+        {
+          text: "Standard",
+          value: "Standard",
+        },
+        {
+          text: "Par Pax",
+          value: "Par Pax",
+        },
+        {
+          text: "Forfaitaire",
+          value: "Forfaitaire",
+        },
+        {
+          text: "Par mois",
+          value: "Par mois",
+        },
+      ],
+      onFilter: (value, record) => record.modalite_vente === value,
     },
     {
       title: "Min",
@@ -114,7 +163,14 @@ const TypeChambre: React.FC = () => {
           setDataSource={setDataSource}
         />
       )}
-      <Table loading={loading} columns={columns} dataSource={dataSource} />
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={dataSource}
+        scroll={{
+          x: "max-content",
+        }}
+      />
     </div>
   );
 };
