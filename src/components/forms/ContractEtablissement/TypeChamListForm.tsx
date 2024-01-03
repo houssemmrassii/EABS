@@ -39,7 +39,7 @@ const TypeChamListForm = (props: Props) => {
         {data[restField?.fieldKey]?.modalite_achat === "Par Pax" && (
           <Col span={12}>
             <Form.Item
-              rules={[{ required: true, message: "Champ requis" }]}
+              // rules={[{ required: true, message: "Champ requis" }]}
               {...restField}
               label="Déf"
               name={[name, "def"]}
@@ -55,7 +55,7 @@ const TypeChamListForm = (props: Props) => {
             label="Numéros de chambre"
             name={[name, "num_chambre"]}
           >
-            <Input />
+            <InputNumber style={{ width: "100%" }} controls={false} />
           </Form.Item>
         </Col>
       </Row>

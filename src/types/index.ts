@@ -1,5 +1,4 @@
-
-export interface EtablissementDataType  {
+export interface EtablissementDataType {
   key: number;
   status?: boolean;
   active?: boolean;
@@ -40,8 +39,22 @@ export interface EtablissementDataType  {
   siret?: null | string;
   tva_instra_communautaire?: null | string;
   ville?: string;
-};
+}
 
+export type ContractEtablissementDataType = {
+  id: number | undefined;
+  fractionnement_id?: string | number | null;
+  etablissement_id?: string | number | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  active?: boolean | null;
+  type_chambres?: Array<{
+    id_type_chambre?: string | number | null;
+    prix_achat?: number | string | null;
+    default_pax?: number | string |null;
+    num_chambres?: number | string |null;
+  }> | null;
+};
 export interface GroupEtablissementDataType {
   key: number;
   name: string;

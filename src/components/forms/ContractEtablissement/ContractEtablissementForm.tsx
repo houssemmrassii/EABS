@@ -18,6 +18,8 @@ import {
 import TypeChamListForm from "./TypeChamListForm";
 import { getFractions, getTypeChambre } from "@/services/Factory";
 import { getEtablissementService } from "@/services/Etablissement";
+import dayjs from "dayjs";
+import { postContractEtablissement } from "@/services/ContractEtablissement";
 
 type Props = {};
 const { RangePicker } = DatePicker;
@@ -42,7 +44,29 @@ const ContractEtablissementForm = (props: Props) => {
 
   const onFinish = async (values: any) => {
     try {
-    } catch (error) {}
+      const payload = {
+        fractionnement_id: values?.fractionnement,
+        etablissement_id: values?.etablissement,
+        start_date: dayjs(values?.period[0]).format("YYYY-MM-DD"),
+        end_date: dayjs(values?.period[1]).format("YYYY-MM-DD"),
+        active: values?.active,
+        type_chambres: values?.type_chambres?.map((elem: any) => {
+          return {
+            id_type_chambre: elem?.id,
+            prix_achat: elem?.prix_achat,
+            default_pax: elem?.def ? elem?.def : null,
+            num_chambres: elem?.num_chambre,
+          };
+        }),
+      };
+
+      console.log(payload);
+
+      const data = await postContractEtablissement(payload);
+    } catch (error) {
+      console.log(error);
+      message.error((error as Error)?.message);
+    }
   };
 
   useEffect(() => {
@@ -66,8 +90,6 @@ const ContractEtablissementForm = (props: Props) => {
     async function fetchRooms() {
       try {
         const data = await getTypeChambre();
-
-        console.log(data);
         const temp = data?.map((elem: any) => {
           return {
             id: elem?.id,
@@ -79,7 +101,7 @@ const ContractEtablissementForm = (props: Props) => {
           };
         });
         setRooms(temp);
-        form.setFieldsValue({ types_chambres: temp });
+        form.setFieldsValue({ type_chambres: temp });
       } catch (error) {
         message.error(error as string);
       }
@@ -130,8 +152,7 @@ const ContractEtablissementForm = (props: Props) => {
             children: (
               <Form
                 layout="vertical"
-                name="normal_login"
-                className="login-form"
+                name="contract-etab"
                 initialValues={{ active: true }}
                 onFinish={onFinish}
                 size="large"
@@ -201,7 +222,7 @@ const ContractEtablissementForm = (props: Props) => {
                       </Col>
                     </Row>
                     <Divider orientation="center">Types chambres</Divider>
-                    <Form.List name="types_chambres">
+                    <Form.List name="type_chambres">
                       {(fields, {}) => (
                         <Row gutter={24}>
                           {fields.map(({ key, name, ...restField }) => {

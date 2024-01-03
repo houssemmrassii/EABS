@@ -1,6 +1,6 @@
 import React, { Key } from "react";
 import { getEtablissementService } from "@services/Etablissement";
-import { Badge, Flex, Popconfirm, Space, Table } from "antd";
+import { Badge, Popconfirm, Space, Table } from "antd";
 import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
 import { deleteEtablissementGroupsService } from "@services/EtablissementGroup";
 import { useEtablissementContext } from "@/context/EtablissementContext";
