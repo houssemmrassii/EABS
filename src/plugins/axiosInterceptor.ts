@@ -45,7 +45,7 @@ axios.interceptors.response.use(
         // Handle 500 error
         // Example: show an error message to the user
         const errorMessage =
-          error?.response?.data?.message || "Something went wrong";
+          error?.response?.data?.message || "Quelque chose s'est mal passé";
         displayNotification(errorMessage, "bottomLeft", 3);
       } else if (status === 401) {
         // Handle 401 error
@@ -53,7 +53,7 @@ axios.interceptors.response.use(
         // window.location.href = "/login";
         const errorMessage =
           error?.response?.data?.message ||
-          "Your session has expired. Please log in again.";
+          "Votre session a expiré. Veuillez vous reconnecter.";
         displayNotification(errorMessage, "bottomLeft", 3);
 
         localStorage.clear();
@@ -63,7 +63,7 @@ axios.interceptors.response.use(
         // Example: show an access denied message to the user
         const errorMessage =
           error?.response?.data?.message ||
-          "You don't have permission to access this resource.";
+          "Vous n'êtes pas autorisé à accéder à cette ressource.";
          displayNotification(errorMessage, "bottomLeft", 3);
       }
     }
