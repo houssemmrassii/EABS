@@ -31,7 +31,7 @@ const ContactEtablissement = (props: Props) => {
   return (
     <>
       <ContractEtablissementForm />
-      <Table columns={columns} />
+      <Table columns={columns} scroll={{ x: "max-content" }} />
     </>
   );
 };

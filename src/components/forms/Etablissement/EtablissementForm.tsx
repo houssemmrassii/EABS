@@ -9,7 +9,6 @@ import {
   Collapse,
   Divider,
   message,
-  InputNumber,
   Typography,
   Flex,
   Space,
@@ -17,20 +16,32 @@ import {
 
 import { PlusOutlined, BuildOutlined } from "@ant-design/icons";
 
-import { useGroupEtablissementContext } from "@context/GroupEtablissementContext";
 import { postEtablissementService } from "@services/Etablissement";
 import {
   getDepartementsByRegion,
+  getFractions,
   getRegions,
   getVillesByDepartment,
 } from "@/services/Factory";
+import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
+import { SelectTOptionType, SelectTOptionTypeWithId } from "@/types";
 
-const EtablissementForm: React.FC = () => {
-  const [cities, setCities] = useState([]);
-  const [regions, setRegions] = useState([]);
-  const [departments, setDepartments] = useState([]);
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
+
+type Props = {
+  setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
+  refrech: boolean;
+};
+
+const EtablissementForm = (props: Props) => {
+  const { refrech, setRefrech } = props;
   const [active, setActive] = useState(false);
-  const { addToTableData } = useGroupEtablissementContext();
+  const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
+  const [fractions, setFractions] = useState<SelectTOptionType[]>();
+  const [cities, setCities] = useState<SelectTOptionTypeWithId[]>([]);
+  const [regions, setRegions] = useState<SelectTOptionTypeWithId[]>([]);
+  const [departments, setDepartments] = useState<SelectTOptionTypeWithId[]>([]);
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
@@ -40,20 +51,11 @@ const EtablissementForm: React.FC = () => {
 
   const onFinish = async (values: any) => {
     try {
-      let result = await postEtablissementService(values);
-      let newObject = {
-        key: result?.id,
-        name: result.name,
-        status: result.active,
-      };
+      await postEtablissementService(values);
+      setRefrech(!refrech);
       message.success("L'établissements a été ajouté avec succès.");
-      setTimeout(() => {
-        addToTableData(newObject);
-        resetAndClose();
-      }, 500);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      // Handle the error if needed
+      message.error((error as Error)?.message);
     }
   };
 
@@ -62,31 +64,42 @@ const EtablissementForm: React.FC = () => {
   };
 
   const handleChangeRegion = async (value: any) => {
+    const id = regions?.find((elem: any) => elem?.value === value)?.id;
+    form.setFieldValue("departments", null);
+    form.setFieldValue("ville", null);
     try {
-      const data = await getDepartementsByRegion(value);
+      const data = await getDepartementsByRegion(id as number);
       const temp = data?.map((item: any) => {
         return {
           label: item?.name,
-          value: item?.id,
+          value: item?.name,
+          id: item?.id,
         };
       });
 
       setDepartments(temp);
-    } catch (error) {}
+    } catch (error) {
+      message.error((error as Error)?.message);
+    }
   };
 
   const handleChangeDepartment = async (value: any) => {
+    const id = departments?.find((elem: any) => elem?.value === value)?.id;
+    form.setFieldValue("ville", null);
     try {
-      const data = await getVillesByDepartment(value);
+      const data = await getVillesByDepartment(id as number);
       const temp = data?.map((item: any) => {
         return {
           label: item?.name,
-          value: item?.id,
+          value: item?.name,
+          id: item?.id,
         };
       });
 
       setCities(temp);
-    } catch (error) {}
+    } catch (error) {
+      message.error((error as Error)?.message);
+    }
   };
 
   useEffect(() => {
@@ -97,7 +110,8 @@ const EtablissementForm: React.FC = () => {
         const temp = data?.map((item: any) => {
           return {
             label: item?.name,
-            value: item?.id,
+            value: item?.name,
+            id: item?.id,
           };
         });
 
@@ -106,6 +120,45 @@ const EtablissementForm: React.FC = () => {
         return message.error((error as Error)?.message);
       }
     }
+
+    async function fetchGroupEtab() {
+      try {
+        const result = await getEtablissementGroupsService();
+        const groups = result?.groups?.map((element: any) => {
+          return {
+            label: element?.name,
+            value: element?.id,
+          };
+        });
+
+        setGroupEtabs(groups);
+      } catch (error) {
+        message.error((error as Error)?.message);
+        // Handle the error if needed
+      }
+    }
+
+    async function fetchFractions() {
+      try {
+        const result = await getFractions();
+
+        const temp = result?.map((elem: any) => {
+          return {
+            label: elem?.name,
+            value: elem?.id,
+          };
+        });
+
+        setFractions(temp);
+      } catch (error) {
+        message.error((error as Error)?.message);
+      }
+    }
+
+    fetchFractions();
+
+    fetchGroupEtab();
+
     fetchRegions();
   }, []);
 
@@ -134,6 +187,7 @@ const EtablissementForm: React.FC = () => {
                 className="login-form"
                 initialValues={{ active: true }}
                 onFinish={onFinish}
+                size="large"
                 form={form}
               >
                 <Row gutter={24}>
@@ -158,19 +212,11 @@ const EtablissementForm: React.FC = () => {
 
                   <Col span={8}>
                     <Form.Item
-                      name="idGroup"
+                      name="group_id"
                       label="Group établissement:"
                       required
                     >
-                      <Select
-                        defaultValue={1}
-                        options={[
-                          {
-                            label: "Par nuitée",
-                            value: 1,
-                          },
-                        ]}
-                      />
+                      <Select options={groupEtabs} />
                     </Form.Item>
                   </Col>
 
@@ -181,7 +227,7 @@ const EtablissementForm: React.FC = () => {
                   </Col>
 
                   <Col span={8}>
-                    <Form.Item name="department" label="Départements" required>
+                    <Form.Item name="departments" label="Départements" required>
                       <Select
                         onChange={handleChangeDepartment}
                         options={departments}
@@ -202,7 +248,7 @@ const EtablissementForm: React.FC = () => {
                   <Col span={8}>
                     <Form.Item
                       label="Code Postal:"
-                      name="codePostal"
+                      name="code_postal"
                       rules={[
                         {
                           required: true,
@@ -210,8 +256,8 @@ const EtablissementForm: React.FC = () => {
                         },
                       ]}
                     >
-                      <InputNumber
-                        placeholder="Nom établissement"
+                      <Input
+                        placeholder="Code Postal"
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -231,6 +277,8 @@ const EtablissementForm: React.FC = () => {
                       <Input />
                     </Form.Item>
                   </Col>
+                  <Divider orientation="center">Contacts</Divider>
+
                   <Col span={8}>
                     <Form.Item
                       label="E-mail"
@@ -245,10 +293,18 @@ const EtablissementForm: React.FC = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
+                  <Col span={5}>
+                    <Form.Item label="Fax" name="num_fax">
+                      <PhoneInput
+                        style={{ width: "100%" }}
+                        defaultCountry="fr"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={5}>
                     <Form.Item
                       label="Num. de tél."
-                      name="num_tel"
+                      name="num_telephone"
                       rules={[
                         {
                           required: true,
@@ -256,31 +312,31 @@ const EtablissementForm: React.FC = () => {
                         },
                       ]}
                     >
-                      <Input />
+                      <PhoneInput
+                        style={{ width: "100%" }}
+                        defaultCountry="fr"
+                      />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
-                    <Form.Item label="Portable" name="portable">
-                      <Input />
+                  <Col span={5}>
+                    <Form.Item label="Portable" name="num_portable">
+                      <PhoneInput
+                        style={{ width: "100%" }}
+                        defaultCountry="fr"
+                      />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
-                    <Form.Item label="Portable" name="portable">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Fax" name="fax">
-                      <Input />
-                    </Form.Item>
-                  </Col>
+
+                  <Divider orientation="center">
+                    Informations d'établissement et de facturation
+                  </Divider>
                   <Col span={8}>
                     <Form.Item label="Siret" name="siret">
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="Immatriculation" name="immatricule">
+                    <Form.Item label="Immatriculation" name="immatriculation">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -290,7 +346,10 @@ const EtablissementForm: React.FC = () => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="TVA intra-communautaire" name="tva_intra">
+                    <Form.Item
+                      label="TVA intra-communautaire"
+                      name="tva_instra_communautaire"
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
@@ -298,7 +357,7 @@ const EtablissementForm: React.FC = () => {
                   <Col span={8}>
                     <Form.Item
                       label="Facture calculée"
-                      name="facture_calc"
+                      name="fractionnement"
                       rules={[
                         {
                           required: true,
@@ -306,16 +365,12 @@ const EtablissementForm: React.FC = () => {
                         },
                       ]}
                     >
-                      <Select>
-                        <Select.Option value="Par nuitée">
-                          Par nuitée
-                        </Select.Option>
-                      </Select>
+                      <Select options={fractions} />
                     </Form.Item>
                   </Col>
 
                   <Col span={8}>
-                    <Form.Item name="active" label="État :">
+                    <Form.Item name="active" label="État">
                       <Select
                         defaultValue={true}
                         options={[
@@ -329,7 +384,7 @@ const EtablissementForm: React.FC = () => {
                           },
                         ]}
                       />
-                    </Form.Item>{" "}
+                    </Form.Item>
                   </Col>
                 </Row>
                 <Divider orientation="center">
@@ -344,7 +399,7 @@ const EtablissementForm: React.FC = () => {
                   <Col span={8}>
                     <Form.Item
                       label="Adresse de la banque"
-                      name="banque_adress"
+                      name="adresse_banque"
                     >
                       <Input />
                     </Form.Item>
@@ -360,7 +415,7 @@ const EtablissementForm: React.FC = () => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="Compte" name="compte">
+                    <Form.Item label="Compte" name="compte_banque">
                       <Input />
                     </Form.Item>
                   </Col>

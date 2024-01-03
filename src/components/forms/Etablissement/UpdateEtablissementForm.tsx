@@ -9,7 +9,6 @@ import {
   Collapse,
   Divider,
   message,
-  InputNumber,
   Typography,
   Flex,
   Space,
@@ -24,41 +23,56 @@ import {
 } from "@services/Etablissement";
 import {
   getDepartementsByRegion,
+  getFractions,
   getRegions,
   getVillesByDepartment,
 } from "@/services/Factory";
+import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
+import {
+  EtablissementDataType,
+  SelectTOptionType,
+  SelectTOptionTypeWithId,
+} from "@/types";
 
-// type Props = {
-//   dataSource: TypeChambreDataType[];
-//   setDataSource: (data: TypeChambreDataType[]) => void;
-//   recordData: TypeChambreDataType | undefined;
-//   setEditing: React.Dispatch<React.SetStateAction<TypeChambreDataType | null>>;
-// };
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
-const UpdateEtablissementForm: React.FC = (props) => {
-  // const {record, setRecords} = props;
-  const [cities, setCities] = useState([]);
-  const [regions, setRegions] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [loading, setLoading] = useState(false);
+type Props = {
+  recordData: EtablissementDataType | undefined;
+  setEditing: React.Dispatch<
+    React.SetStateAction<EtablissementDataType | null>
+  >;
+  refrech: boolean;
+  setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const UpdateEtablissementForm = (props: Props) => {
+  const { recordData, setEditing, refrech, setRefrech } = props;
+
   const [active, setActive] = useState(false);
-  const { addToTableData } = useGroupEtablissementContext();
+  const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
+  const [fractions, setFractions] = useState<SelectTOptionType[]>();
+  const [cities, setCities] = useState<SelectTOptionTypeWithId[]>([]);
+  const [regions, setRegions] = useState<SelectTOptionTypeWithId[]>([]);
+  const [departments, setDepartments] = useState<SelectTOptionTypeWithId[]>([]);
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
     form.resetFields();
     setActive(false);
+    setEditing(null);
   };
 
   const onFinish = async (values: any) => {
     try {
-      // let result = await updateEtablissementService(record?.id,values);
-      // setTimeout(() => {
-      //   resetAndClose();
-      // }, 500);
+      await updateEtablissementService(recordData?.id as number, values);
+
+      message.success("L'établissements a été modifiée avec succès.");
+      setRefrech(!refrech);
+      setActive(false);
+      setEditing(null);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      // Handle the error if needed
+      console.error((error as Error)?.message);
     }
   };
 
@@ -67,31 +81,42 @@ const UpdateEtablissementForm: React.FC = (props) => {
   };
 
   const handleChangeRegion = async (value: any) => {
+    const id = regions?.find((elem: any) => elem?.value === value)?.id;
+    form.setFieldValue("departments", null);
+    form.setFieldValue("ville", null);
     try {
-      const data = await getDepartementsByRegion(value);
+      const data = await getDepartementsByRegion(id as number);
       const temp = data?.map((item: any) => {
         return {
           label: item?.name,
-          value: item?.id,
+          value: item?.name,
+          id: item?.id,
         };
       });
 
       setDepartments(temp);
-    } catch (error) {}
+    } catch (error) {
+      console.error((error as Error)?.message);
+    }
   };
 
   const handleChangeDepartment = async (value: any) => {
+    const id = departments?.find((elem: any) => elem?.value === value)?.id;
+    form.setFieldValue("ville", null);
     try {
-      const data = await getVillesByDepartment(value);
+      const data = await getVillesByDepartment(id as number);
       const temp = data?.map((item: any) => {
         return {
           label: item?.name,
-          value: item?.id,
+          value: item?.name,
+          id: item?.id,
         };
       });
 
       setCities(temp);
-    } catch (error) {}
+    } catch (error) {
+      console.error((error as Error)?.message);
+    }
   };
 
   useEffect(() => {
@@ -102,19 +127,71 @@ const UpdateEtablissementForm: React.FC = (props) => {
         const temp = data?.map((item: any) => {
           return {
             label: item?.name,
-            value: item?.id,
+            value: item?.name,
+            id: item?.id,
           };
         });
 
         setRegions(temp);
-        // form.setFieldsValue({...record});
-        // setLoading(false);
       } catch (error) {
         return message.error((error as Error)?.message);
       }
     }
+
+    async function fetchGroupEtab() {
+      try {
+        const result = await getEtablissementGroupsService();
+        const groups = result?.groups?.map((element: any) => {
+          return {
+            label: element?.name,
+            value: element?.id,
+          };
+        });
+
+        setGroupEtabs(groups);
+      } catch (error) {
+        console.error((error as Error)?.message);
+      }
+    }
+
+    async function fetchFractions() {
+      try {
+        const result = await getFractions();
+
+        const temp = result?.map((elem: any) => {
+          return {
+            label: elem?.name,
+            value: elem?.id,
+          };
+        });
+
+        setFractions(temp);
+      } catch (error) {
+        console.error((error as Error)?.message);
+      }
+    }
+
+    fetchFractions();
+
+    fetchGroupEtab();
+
     fetchRegions();
   }, []);
+
+  useEffect(() => {
+    async function setData() {
+      try {
+        form.setFieldsValue({
+          ...recordData,
+          fractionnement: recordData?.id_fractionnement,
+        });
+      } catch (error) {
+        message.error((error as Error)?.message);
+      }
+    }
+
+    setData();
+  }, [recordData]);
 
   return (
     <div>
@@ -133,8 +210,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
             key: "1",
             label: (
               <Typography.Text strong>
-                Modifier
-                {/* {record?.name}  */}
+                Modifier {recordData?.name}
               </Typography.Text>
             ),
             children: (
@@ -144,6 +220,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                 className="login-form"
                 initialValues={{ active: true }}
                 onFinish={onFinish}
+                size="large"
                 form={form}
               >
                 <Row gutter={24}>
@@ -168,19 +245,11 @@ const UpdateEtablissementForm: React.FC = (props) => {
 
                   <Col span={8}>
                     <Form.Item
-                      name="idGroup"
+                      name="group_id"
                       label="Group établissement:"
                       required
                     >
-                      <Select
-                        defaultValue={1}
-                        options={[
-                          {
-                            label: "Par nuitée",
-                            value: 1,
-                          },
-                        ]}
-                      />
+                      <Select options={groupEtabs} />
                     </Form.Item>
                   </Col>
 
@@ -191,7 +260,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                   </Col>
 
                   <Col span={8}>
-                    <Form.Item name="department" label="Départements" required>
+                    <Form.Item name="departments" label="Départements" required>
                       <Select
                         onChange={handleChangeDepartment}
                         options={departments}
@@ -212,7 +281,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                   <Col span={8}>
                     <Form.Item
                       label="Code Postal:"
-                      name="codePostal"
+                      name="code_postal"
                       rules={[
                         {
                           required: true,
@@ -220,8 +289,8 @@ const UpdateEtablissementForm: React.FC = (props) => {
                         },
                       ]}
                     >
-                      <InputNumber
-                        placeholder="Nom établissement"
+                      <Input
+                        placeholder="Code Postal"
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -241,6 +310,8 @@ const UpdateEtablissementForm: React.FC = (props) => {
                       <Input />
                     </Form.Item>
                   </Col>
+                  <Divider orientation="center">Contacts</Divider>
+
                   <Col span={8}>
                     <Form.Item
                       label="E-mail"
@@ -255,10 +326,18 @@ const UpdateEtablissementForm: React.FC = (props) => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
+                  <Col span={5}>
+                    <Form.Item label="Fax" name="num_fax">
+                      <PhoneInput
+                        style={{ width: "100%" }}
+                        defaultCountry="fr"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={5}>
                     <Form.Item
                       label="Num. de tél."
-                      name="num_tel"
+                      name="num_telephone"
                       rules={[
                         {
                           required: true,
@@ -266,31 +345,31 @@ const UpdateEtablissementForm: React.FC = (props) => {
                         },
                       ]}
                     >
-                      <Input />
+                      <PhoneInput
+                        style={{ width: "100%" }}
+                        defaultCountry="fr"
+                      />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
-                    <Form.Item label="Portable" name="portable">
-                      <Input />
+                  <Col span={5}>
+                    <Form.Item label="Portable" name="num_portable">
+                      <PhoneInput
+                        style={{ width: "100%" }}
+                        defaultCountry="fr"
+                      />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
-                    <Form.Item label="Portable" name="portable">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Fax" name="fax">
-                      <Input />
-                    </Form.Item>
-                  </Col>
+
+                  <Divider orientation="center">
+                    Informations d'établissement et de facturation
+                  </Divider>
                   <Col span={8}>
                     <Form.Item label="Siret" name="siret">
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="Immatriculation" name="immatricule">
+                    <Form.Item label="Immatriculation" name="immatriculation">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -300,7 +379,10 @@ const UpdateEtablissementForm: React.FC = (props) => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="TVA intra-communautaire" name="tva_intra">
+                    <Form.Item
+                      label="TVA intra-communautaire"
+                      name="tva_instra_communautaire"
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
@@ -308,7 +390,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                   <Col span={8}>
                     <Form.Item
                       label="Facture calculée"
-                      name="facture_calc"
+                      name="fractionnement"
                       rules={[
                         {
                           required: true,
@@ -316,11 +398,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                         },
                       ]}
                     >
-                      <Select>
-                        <Select.Option value="Par nuitée">
-                          Par nuitée
-                        </Select.Option>
-                      </Select>
+                      <Select options={fractions} />
                     </Form.Item>
                   </Col>
 
@@ -354,7 +432,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                   <Col span={8}>
                     <Form.Item
                       label="Adresse de la banque"
-                      name="banque_adress"
+                      name="adresse_banque"
                     >
                       <Input />
                     </Form.Item>
@@ -370,7 +448,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="Compte" name="compte">
+                    <Form.Item label="Compte" name="compte_banque">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -394,7 +472,7 @@ const UpdateEtablissementForm: React.FC = (props) => {
 
                     <Form.Item>
                       <Button type="primary" htmlType="submit">
-                        Ajouter
+                        Modifier
                       </Button>
                     </Form.Item>
                   </Space>

@@ -1,6 +1,6 @@
 import React, { Key } from "react";
 import { getEtablissementService } from "@services/Etablissement";
-import { Badge, Flex, Popconfirm, Table } from "antd";
+import { Badge, Flex, Popconfirm, Space, Table } from "antd";
 import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
 import { deleteEtablissementGroupsService } from "@services/EtablissementGroup";
 import { useEtablissementContext } from "@/context/EtablissementContext";
@@ -8,66 +8,37 @@ import { useEtablissementContext } from "@/context/EtablissementContext";
 import EtablissementForm from "@forms/Etablissement/EtablissementForm";
 
 import type { ColumnsType } from "antd/es/table";
-import TableHeadSearch from "@forms/TableHeadSearch";
-
-interface DataType {
-  key: number;
-  name: string;
-  status: boolean;
-}
+import { useGlobal } from "@/context/GlobalContext";
+import { EtablissementDataType } from "@/types";
+import UpdateEtablissementForm from "@/components/forms/Etablissement/UpdateEtablissementForm";
 
 const Etablissement: React.FC = () => {
+  const { getColumnSearchProps } = useGlobal();
   const { tableData, setTableData } = useEtablissementContext();
   const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState<Key | null>();
-
+  const [editing, setEditing] = useState<EtablissementDataType | null>(null);
+  const [refrech, setRefrech] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getEtablissementService();
-        let etablissements = result.etablissements;
-        let prepareEtablissements = etablissements.map(
-          (etablissement: {
-            id: number;
-            name: string;
-            active: boolean;
-            group_data: { name: string };
-            fractionnement_data: { name: string };
-            num_telephone: string;
-            email: string;
-            num_fax: string;
-          }) => ({
-            key: etablissement?.id,
-            name: etablissement?.name,
-            status: etablissement?.active,
-            groupName: etablissement?.group_data.name,
-            Fractionnement: etablissement?.fractionnement_data.name,
-            NumTel: etablissement?.num_telephone,
-            Email: etablissement?.email,
-            Fax: etablissement?.num_fax,
-          })
-        );
-        setTableData(prepareEtablissements);
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
+
+        setTableData(result?.etablissements);
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle the error if needed
       }
     };
 
     fetchData();
-  }, []);
+  }, [refrech]);
 
-  const handleDelete = async (key: React.Key) => {
+  const handleDelete = async (key: number | undefined) => {
     if (tableData) {
       try {
         await deleteEtablissementGroupsService(key as number);
-        setTimeout(() => {
-          const newData = tableData.filter((item) => item.key !== key);
-          setTableData(newData);
-        }, 500);
+        setTimeout(() => {}, 500);
       } catch (error) {
         console.error("Error fetching data:", error);
         // Handle the error if needed
@@ -75,47 +46,48 @@ const Etablissement: React.FC = () => {
     }
   };
 
-  const tableHeadSearchColumn = [
-    TableHeadSearch({
-      name: "name",
-      title: "Établissement",
-    }),
-  ] as ColumnsType<DataType>;
-
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<EtablissementDataType> = [
     {
-      ...tableHeadSearchColumn[0],
+      title: "Établissement",
+      dataIndex: "name",
+      key: "name",
+      ...getColumnSearchProps("name", "Établissement"),
     },
     {
       title: "G. Établissement",
-      dataIndex: "groupName",
+      dataIndex: "group_data.name",
       key: "groupName",
+      render: (_, record: EtablissementDataType) => (
+        <>{record?.group_data?.name}</>
+      ),
     },
     {
       title: "Fractionnement",
-      dataIndex: "Fractionnement",
+      dataIndex: "fractionnement_data.name",
       key: "Fractionnement",
+      render: (_, record: EtablissementDataType) => (
+        <>{record?.fractionnement_data?.name}</>
+      ),
     },
     {
       title: "N° Tél",
-      dataIndex: "NumTel",
+      dataIndex: "num_telephone",
       key: "NumTel",
     },
     {
       title: "Email",
-      dataIndex: "Email",
+      dataIndex: "email",
       key: "Email",
     },
     {
       title: "Fax",
-      dataIndex: "Fax",
+      dataIndex: "num_fax",
       key: "Fax",
     },
     {
       title: "Statut",
-      dataIndex: "status",
+      dataIndex: "active",
       key: "status",
-
       filters: [
         {
           text: "Activé",
@@ -126,43 +98,45 @@ const Etablissement: React.FC = () => {
           value: false,
         },
       ],
-      // sorter: (a, b) => a.name.length - b.name.length,
-      onFilter: (value: boolean | Key, record: DataType) =>
-        record.status === value,
-      render: (_, { status }) => (
-        /*  <Tag color={status ? "blue" : "red"}>
-          {status ? "Activé" : "Désactivé"}
-        </Tag> */
+      onFilter: (value: boolean | Key, record: EtablissementDataType) =>
+        record.active === value,
+      render: (_, { active }) => (
         <Badge
-          status={status ? "success" : "error"}
-          text={status ? "Activé" : "Désactivé"}
+          status={active ? "success" : "error"}
+          text={active ? "Activé" : "Désactivé"}
         />
       ),
     },
     {
       title: "Paramètres",
       dataIndex: "Paramètres",
-      render: (_, record: { key: React.Key }) =>
-        tableData ? (
-          tableData.length >= 1 ? (
-            <Flex justify={"space-around"} align={"center"}>
-              <EditTwoTone onClick={() => setEditing(record.key)} />{" "}
-              <Popconfirm
-                title="Vous êtes sûr de supprimer?"
-                onConfirm={() => handleDelete(record.key)}
-                okText="Confirmer"
-                cancelText="Annuler"
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </Flex>
-          ) : null
-        ) : null,
+      render: (_, record) => (
+        <Space>
+          <EditTwoTone onClick={() => setEditing(record)} />
+
+          <Popconfirm
+            title="Vous êtes sûr de supprimer?"
+            onConfirm={() => handleDelete(record?.id)}
+            okText="Confirmer"
+            cancelText="Annuler"
+          >
+            <DeleteOutlined />
+          </Popconfirm>
+        </Space>
+      ),
     },
   ];
   return (
     <>
-      <EtablissementForm />
+      <EtablissementForm refrech={refrech} setRefrech={setRefrech} />
+      {editing && (
+        <UpdateEtablissementForm
+          recordData={editing}
+          setEditing={setEditing}
+          setRefrech={setRefrech}
+          refrech={refrech}
+        />
+      )}
       <Table
         columns={columns}
         loading={loading}

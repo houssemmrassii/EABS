@@ -1,28 +1,25 @@
-import React, { Key } from "react";
-import { Flex, Popconfirm, Space, Table, message } from "antd";
+import React from "react";
 import { TypeChambreDataType } from "@/types";
-import { ColumnsType } from "antd/es/table";
-import TypeChambreForm from "@forms/TypeChambreForm";
-import { deleteTypeChambre, getTypeChambre } from "@/services/Factory";
-import TableHeadSearch from "@/components/forms/TableHeadSearch";
+import type { ColumnsType } from "antd/es/table";
+import { useGlobal } from "@/context/GlobalContext";
+import TypeChambreForm from "@/components/forms/TypeChambre/TypeChambreForm";
+import { Popconfirm, Space, Table, message } from "antd";
 import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
-import UpdateTypeChambreForm from "@/components/forms/UpdateTypeChambreForm";
+import { deleteTypeChambre, getTypeChambre } from "@/services/Factory";
+import UpdateTypeChambreForm from "@/components/forms/TypeChambre/UpdateTypeChambreForm";
 
 const TypeChambre: React.FC = () => {
+  const { getColumnSearchProps } = useGlobal();
   const [dataSource, setDataSource] = useState<TypeChambreDataType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [editing, setEditing] = useState<TypeChambreDataType | null>(null);
 
-  const tableHeadSearchColumn = [
-    TableHeadSearch({
-      name: "name",
-      title: "Type de chambre",
-    }),
-  ] as ColumnsType<TypeChambreDataType>;
-
   const columns: ColumnsType<TypeChambreDataType> = [
     {
-      ...tableHeadSearchColumn[0],
+      title: "Type de chambre",
+      dataIndex: "name",
+      key: "name",
+      ...getColumnSearchProps("name", "type de chambre"),
     },
     {
       title: "Type de pension",
@@ -86,7 +83,8 @@ const TypeChambre: React.FC = () => {
           value: "Par mois",
         },
       ],
-      onFilter: (value, record) => record.modalite_vente === value,
+      onFilter: (value, record) =>
+        record.modalite_vente.includes(value.toString()),
     },
     {
       title: "Min",

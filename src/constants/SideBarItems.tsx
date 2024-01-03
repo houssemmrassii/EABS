@@ -37,7 +37,12 @@ const items: MenuItem[] = [
       <Link to="/dashboard/type-chambre">Type Chambre</Link>,
       "etab-type-chambre"
     ),
-    getItem("Contract Etablissement", "etab-contract-etab"),
+    getItem(
+      <Link to="/dashboard/contract-etablissement">
+        Contract Etablissement
+      </Link>,
+      "etab-contract-etab"
+    ),
     getItem(
       <Link to="/dashboard/group-etablissement">Group Etablissement</Link>,
       "etab-group-etab"

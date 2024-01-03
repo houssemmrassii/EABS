@@ -11,10 +11,6 @@ const TableHeadSearch = (props: Props) => {
   const { name, title } = props;
   const [searchText, setSearchText] = useState("");
 
-  const onFilter = (value: string, record: any) => {
-    return record[name].toLowerCase().includes(String(value));
-  };
-
   const handleRender = (text: string) => {
     return (
       <>
@@ -48,7 +44,8 @@ const TableHeadSearch = (props: Props) => {
     dataIndex: name,
     key: name,
     filteredValue: searchText ? [searchText.toLowerCase()] : null,
-    onFilter: onFilter,
+    onFilter: (value: string, record: any) =>
+      record[name].toLowerCase().includes(String(value)),
     render: handleRender,
   };
 };

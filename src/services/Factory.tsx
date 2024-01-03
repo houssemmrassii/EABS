@@ -76,3 +76,13 @@ export const getVillesByDepartment = async (idDep: number) => {
     throw new Error(error?.response?.data?.message);
   }
 };
+
+export const getFractions = async () => {
+  try {
+    const { data } = await axiosInstance.get(`/fractionnements`);
+
+    return data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message);
+  }
+};

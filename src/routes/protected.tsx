@@ -10,7 +10,10 @@ const GroupEtablissement = lazyLoad(
   () => import("@pages/GroupEtablissement"),
   "default"
 );
-
+const ContractEtablissement = lazyLoad(
+  () => import("@pages/ContractEtablissement"),
+  "default"
+);
 const TypeChambre = lazyLoad(() => import("@pages/TypeChambre"), "default");
 
 const Dashboard = lazyLoad(() => import("@pages/Dashboard"), "default");
@@ -40,6 +43,10 @@ export const protectedRoutes = [
       {
         path: "type-chambre",
         element: TypeChambre,
+      },
+      {
+        path: "contract-etablissement",
+        element: ContractEtablissement,
       },
     ],
   },

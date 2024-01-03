@@ -11,9 +11,8 @@ import {
 import UpdateGroupEtablissementForm from "@forms/EtablissementGroup/UpdateGroupEtablissementForm";
 import GroupEtablissementForm from "@forms/EtablissementGroup/GroupEtablissementForm";
 
-import TableHeadSearch from "@forms/TableHeadSearch";
-
 import type { ColumnsType } from "antd/es/table";
+import { useGlobal } from "@/context/GlobalContext";
 
 interface DataType {
   key: number;
@@ -22,6 +21,7 @@ interface DataType {
 }
 
 const GroupEtablissement: React.FC = () => {
+  const { getColumnSearchProps } = useGlobal();
   const { tableData, setTableData } = useGroupEtablissementContext();
   const [loading, setloading] = useState(true);
   const [editing, setEditing] = useState<Key | null>();
@@ -66,16 +66,11 @@ const GroupEtablissement: React.FC = () => {
     }
   };
 
-  const tableHeadSearchColumn = [
-    TableHeadSearch({
-      name: "name",
-      title: "Groupe d'établissement",
-    }),
-  ] as ColumnsType<DataType>;
-
   const columns: ColumnsType<DataType> = [
     {
-      ...tableHeadSearchColumn[0],
+      title: "Groupe d'établissement",
+      dataIndex: "name",
+      ...getColumnSearchProps("name", "Groupe d'établissement"),
     },
     {
       title: "Statut",
@@ -92,13 +87,9 @@ const GroupEtablissement: React.FC = () => {
           value: false,
         },
       ],
-      // sorter: (a, b) => a.name.length - b.name.length,
       onFilter: (value: boolean | Key, record: DataType) =>
         record.status === value,
       render: (_, { status }) => (
-        /*  <Tag color={status ? "blue" : "red"}>
-          {status ? "Activé" : "Désactivé"}
-        </Tag> */
         <Badge
           status={status ? "success" : "error"}
           text={status ? "Activé" : "Désactivé"}
@@ -138,7 +129,6 @@ const GroupEtablissement: React.FC = () => {
       <Table
         columns={columns}
         loading={loading}
-        rowSelection={{}}
         dataSource={tableData}
         pagination={{ pageSize: 15 }}
         footer={() => ""}
