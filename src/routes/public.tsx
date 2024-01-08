@@ -13,6 +13,7 @@ export const publicRoutes = [
     path: "/",
     element: <PublicRoutes />,
   },
+
   {
     path: "/*",
     element: NotFound,
