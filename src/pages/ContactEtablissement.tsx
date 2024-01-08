@@ -5,9 +5,9 @@ import { message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Table } from "antd/lib";
 
-type Props = {};
+/* type Props = {}; */
 
-const ContactEtablissement = (props: Props) => {
+const ContactEtablissement = (/* props: Props */) => {
   const [data, setData] = useState<ContractEtablissementDataType[]>([]);
   const columns: ColumnsType<ContractEtablissementDataType> = [
     {
@@ -33,6 +33,7 @@ const ContactEtablissement = (props: Props) => {
     },
   ];
 
+  console.log(data);
   useEffect(() => {
     async function fetchData() {
       try {

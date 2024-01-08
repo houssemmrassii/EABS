@@ -19,12 +19,11 @@ import TypeChamListForm from "./TypeChamListForm";
 import { getFractions, getTypeChambre } from "@/services/Factory";
 import { getEtablissementService } from "@/services/Etablissement";
 import dayjs from "dayjs";
-import { postContractEtablissement } from "@/services/ContractEtablissement";
 
-type Props = {};
+/* type Props = {}; */
 const { RangePicker } = DatePicker;
 
-const ContractEtablissementForm = (props: Props) => {
+const ContractEtablissementForm = (/* props: Props */) => {
   const [active, setActive] = useState(false);
   const [etablissements, setEtablissements] = useState<any>([]);
   const [rooms, setRooms] = useState<any>([]);
@@ -62,7 +61,7 @@ const ContractEtablissementForm = (props: Props) => {
 
       console.log(payload);
 
-      const data = await postContractEtablissement(payload);
+      /* const data = await postContractEtablissement(payload); */
     } catch (error) {
       console.log(error);
       message.error((error as Error)?.message);

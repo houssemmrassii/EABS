@@ -1,8 +1,6 @@
-import React from "react";
+/* type Props = {}; */
 
-type Props = {};
-
-const NotFound = (props: Props) => {
+const NotFound = (/* props: Props */) => {
   return (
     <div
       style={{

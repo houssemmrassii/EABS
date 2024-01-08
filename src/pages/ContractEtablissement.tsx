@@ -5,10 +5,11 @@ import { message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Table } from "antd/lib";
 
-type Props = {};
+/* type Props = {}; */
 
-const ContactEtablissement = (props: Props) => {
+const ContactEtablissement = (/* props: Props */) => {
   const [data, setData] = useState<ContractEtablissementDataType[]>([]);
+  console.log(data);
   const columns: ColumnsType<ContractEtablissementDataType> = [
     {
       title: "Contract Etab.",

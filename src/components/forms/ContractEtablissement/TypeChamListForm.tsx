@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, Row, Select, Typography } from "antd";
+import { Col, Form,  InputNumber, Row, Select, Typography } from "antd";
 
 type Props = {
   restField: any;

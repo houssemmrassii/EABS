@@ -1,10 +1,9 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Card, Col, Row, Statistic } from "antd";
-import React from "react";
 
-type Props = {};
+/* type Props = {}; */
 
-const Dashboard = (props: Props) => {
+const Dashboard = (/* props: Props */) => {
   return (
     <Row gutter={16}>
       <Col span={12}>

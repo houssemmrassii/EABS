@@ -1,8 +1,7 @@
-import React from "react";
 
-type Props = {};
+//type Props = {};
 
-const UpdateContractEtablissementForm = (props: Props) => {
+const UpdateContractEtablissementForm = (/* props: Props */) => {
   return <div>UpdateContractEtablissementForm</div>;
 };
 

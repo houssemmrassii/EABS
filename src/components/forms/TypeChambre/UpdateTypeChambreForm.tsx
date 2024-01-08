@@ -1,4 +1,4 @@
-import { patchTypeChambre, postTypeChambre } from "@/services/Factory";
+import { patchTypeChambre } from "@/services/Factory";
 import { TypeChambreDataType } from "@/types";
 import { PlusOutlined } from "@ant-design/icons";
 import {

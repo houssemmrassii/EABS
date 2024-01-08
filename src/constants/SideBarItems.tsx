@@ -1,6 +1,6 @@
 import React from "react";
 
-import { TeamOutlined, DashboardOutlined } from "@ant-design/icons";
+import {  DashboardOutlined } from "@ant-design/icons";
 
 import type { MenuProps } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

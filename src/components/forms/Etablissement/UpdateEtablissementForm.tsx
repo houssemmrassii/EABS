@@ -16,9 +16,7 @@ import {
 
 import { PlusOutlined, BuildOutlined } from "@ant-design/icons";
 
-import { useGroupEtablissementContext } from "@context/GroupEtablissementContext";
 import {
-  postEtablissementService,
   updateEtablissementService,
 } from "@services/Etablissement";
 import {
