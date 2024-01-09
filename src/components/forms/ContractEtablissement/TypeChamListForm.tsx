@@ -1,4 +1,4 @@
-import { Col, Form,  InputNumber, Row, Select, Typography } from "antd";
+import { Col, Form, InputNumber, Row, Select, Typography } from "antd";
 
 type Props = {
   restField: any;
@@ -44,7 +44,13 @@ const TypeChamListForm = (props: Props) => {
               label="Déf"
               name={[name, "def"]}
             >
-              <Select />
+              <Select
+                options={data[restField?.fieldKey]?.def_array?.map(
+                  (elem: number) => {
+                    return { label: elem, value: elem };
+                  }
+                )}
+              />
             </Form.Item>
           </Col>
         )}

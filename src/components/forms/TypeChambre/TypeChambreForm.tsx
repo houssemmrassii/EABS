@@ -223,7 +223,7 @@ const TypeChambreForm = (props: Props) => {
                 <Form.Item>
                   <Flex justify="center">
                     <Space>
-                      <Button>Annuler</Button>
+                      <Button onClick={callback}>Annuler</Button>
                       <Button type="primary" htmlType="submit">
                         Ajouter
                       </Button>

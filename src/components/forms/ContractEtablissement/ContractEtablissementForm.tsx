@@ -19,11 +19,13 @@ import TypeChamListForm from "./TypeChamListForm";
 import { getFractions, getTypeChambre } from "@/services/Factory";
 import { getEtablissementService } from "@/services/Etablissement";
 import dayjs from "dayjs";
+import { postContractEtablissement } from "@/services/ContractEtablissement";
 
 /* type Props = {}; */
 const { RangePicker } = DatePicker;
 
 const ContractEtablissementForm = (/* props: Props */) => {
+  const [dateRange, setDateRange] = useState<number | null>(null);
   const [active, setActive] = useState(false);
   const [etablissements, setEtablissements] = useState<any>([]);
   const [rooms, setRooms] = useState<any>([]);
@@ -61,7 +63,7 @@ const ContractEtablissementForm = (/* props: Props */) => {
 
       console.log(payload);
 
-      /* const data = await postContractEtablissement(payload); */
+      const data = await postContractEtablissement(payload);
     } catch (error) {
       console.log(error);
       message.error((error as Error)?.message);
@@ -96,6 +98,9 @@ const ContractEtablissementForm = (/* props: Props */) => {
             name: elem?.name,
             prix_achat: null,
             def: null,
+            def_array: Array.from(
+              new Set([elem?.num_max_occupants, elem?.num_defaut_occupants])
+            ),
             num_chambre: null,
           };
         });
@@ -159,7 +164,11 @@ const ContractEtablissementForm = (/* props: Props */) => {
               >
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item name="etablissement" label="Établissement">
+                    <Form.Item
+                      name="etablissement"
+                      label="Établissement"
+                      rules={[{ required: true, message: "Champ requis" }]}
+                    >
                       <Select
                         options={etablissements}
                         onChange={(e) => setSelectedEtab(e)}
@@ -167,8 +176,31 @@ const ContractEtablissementForm = (/* props: Props */) => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item name="period" label="Période">
-                      <RangePicker style={{ width: "100%" }} />
+                    <Form.Item
+                      name="period"
+                      rules={[{ required: true, message: "Champ requis" }]}
+                      label={
+                        <>
+                          Période{" "}
+                          {dateRange && (
+                            <Typography.Text strong style={{ marginLeft: 2 }}>
+                              ({dateRange} nuités)
+                            </Typography.Text>
+                          )}
+                        </>
+                      }
+                    >
+                      <RangePicker
+                        style={{ width: "100%" }}
+                        onChange={(e) => {
+                          if (e) {
+                            const days = dayjs(e[1]).diff(e[0], "day");
+                            setDateRange(days);
+                          } else {
+                            setDateRange(null);
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -215,6 +247,7 @@ const ContractEtablissementForm = (/* props: Props */) => {
                         <Form.Item
                           name="fractionnement"
                           label="Facture calculée"
+                          rules={[{ required: true, message: "Champ requis" }]}
                         >
                           <Select options={fractions} />
                         </Form.Item>

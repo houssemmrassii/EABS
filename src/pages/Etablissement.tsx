@@ -1,8 +1,11 @@
 import React, { Key } from "react";
 import { getEtablissementService } from "@services/Etablissement";
-import { Badge, Popconfirm, Space, Table } from "antd";
+import { Badge, Popconfirm, Space, Table, message } from "antd";
 import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
-import { deleteEtablissementGroupsService } from "@services/EtablissementGroup";
+import {
+  deleteEtablissementGroupsService,
+  getEtablissementGroupsService,
+} from "@services/EtablissementGroup";
 import { useEtablissementContext } from "@/context/EtablissementContext";
 
 import EtablissementForm from "@forms/Etablissement/EtablissementForm";
@@ -18,6 +21,7 @@ const Etablissement: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<EtablissementDataType | null>(null);
   const [refrech, setRefrech] = useState(false);
+  const [groupEtabs, setGroupEtabs] = useState<any>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,6 +34,24 @@ const Etablissement: React.FC = () => {
         console.error("Error fetching data:", error);
       }
     };
+
+    async function fetchGroupEtab() {
+      try {
+        const result = await getEtablissementGroupsService();
+        const groups = result?.groups?.map((element: any) => {
+          return {
+            text: element?.name,
+            value: element?.name,
+          };
+        });
+
+        setGroupEtabs(groups);
+      } catch (error) {
+        message.error((error as Error)?.message);
+      }
+    }
+
+    fetchGroupEtab();
 
     fetchData();
   }, [refrech]);
@@ -57,6 +79,8 @@ const Etablissement: React.FC = () => {
       title: "G. Établissement",
       dataIndex: "group_data.name",
       key: "groupName",
+      filters: groupEtabs,
+      onFilter: (value, record) => record?.group_data?.name === value,
       render: (_, record: EtablissementDataType) => (
         <>{record?.group_data?.name}</>
       ),
@@ -65,6 +89,7 @@ const Etablissement: React.FC = () => {
       title: "Fractionnement",
       dataIndex: "fractionnement_data.name",
       key: "Fractionnement",
+
       render: (_, record: EtablissementDataType) => (
         <>{record?.fractionnement_data?.name}</>
       ),
@@ -73,16 +98,20 @@ const Etablissement: React.FC = () => {
       title: "N° Tél",
       dataIndex: "num_telephone",
       key: "NumTel",
+      ...getColumnSearchProps("num_telephone", "N° Tél"),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "Email",
+      ...getColumnSearchProps("email", "Email"),
     },
     {
       title: "Fax",
       dataIndex: "num_fax",
       key: "Fax",
+
+      ...getColumnSearchProps("num_fax", "Fax"),
     },
     {
       title: "Statut",
