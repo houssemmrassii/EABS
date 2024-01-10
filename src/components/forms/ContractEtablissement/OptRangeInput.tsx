@@ -1,6 +1,6 @@
-type Props = {};
+/* type Props = {}; */
 
-const OptRangeInput = (props: Props) => {
+const OptRangeInput = (/* props: Props */) => {
   return <div></div>;
 };
 

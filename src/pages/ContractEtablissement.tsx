@@ -23,7 +23,8 @@ const ContactEtablissement = () => {
   const columns: ColumnsType<ContractEtablissementDataType> = [
     {
       title: "Contract Etab.",
-      render: (_, record) => <>N/A</>,
+      //render: (_, record) => <>N/A</>,
+      render: () => <>N/A</>,
     },
     {
       title: "Etab.",
@@ -59,7 +60,8 @@ const ContactEtablissement = () => {
     },
     {
       title: "Intermédiare",
-      render: (_, record) => <>N/A</>,
+      //render: (_, record) => <>N/A</>,
+      render: () => <>N/A</>,
     },
     {
       title: "Statut",
