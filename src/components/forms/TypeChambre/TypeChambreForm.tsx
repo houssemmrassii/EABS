@@ -60,7 +60,7 @@ const TypeChambreForm = (props: Props) => {
         )}
         activeKey={active ? "1" : "0"}
         onChange={callback}
-        expandIconPosition={"right"}
+        expandIconPosition={"end"}
         items={[
           {
             key: "1",

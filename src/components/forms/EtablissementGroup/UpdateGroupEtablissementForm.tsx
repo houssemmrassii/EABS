@@ -68,7 +68,7 @@ const UpdateGroupEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
         expandIcon={() => <EditOutlined style={{ fontSize: "20px" }} />}
         activeKey={active ? "1" : "0"}
         onChange={callback}
-        expandIconPosition={"right"}
+        expandIconPosition={"end"}
         collapsible="disabled"
         items={[
           {
