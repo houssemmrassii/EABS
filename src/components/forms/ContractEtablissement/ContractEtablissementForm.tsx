@@ -21,10 +21,15 @@ import { getEtablissementService } from "@/services/Etablissement";
 import dayjs from "dayjs";
 import { postContractEtablissement } from "@/services/ContractEtablissement";
 
-/* type Props = {}; */
+type Props = {
+  refrech: boolean;
+  setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 const { RangePicker } = DatePicker;
 
-const ContractEtablissementForm = (/* props: Props */) => {
+const ContractEtablissementForm = (props: Props) => {
+  const { refrech, setRefrech } = props;
   const [dateRange, setDateRange] = useState<number | null>(null);
   const [active, setActive] = useState(false);
   const [etablissements, setEtablissements] = useState<any>([]);
@@ -61,9 +66,10 @@ const ContractEtablissementForm = (/* props: Props */) => {
         }),
       };
 
-      console.log(payload);
+      await postContractEtablissement(payload);
 
-      const data = await postContractEtablissement(payload);
+      setRefrech(!refrech);
+      resetAndClose();
     } catch (error) {
       console.log(error);
       message.error((error as Error)?.message);

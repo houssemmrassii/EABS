@@ -42,23 +42,38 @@ export interface EtablissementDataType {
 }
 
 export type ContractEtablissementDataType = {
-  id: number | undefined;
-  fractionnement_id?: string | number | null;
-  etablissement_id?: string | number | null;
-  start_date?: string | null;
-  end_date?: string | null;
-  active?: boolean | null;
-  type_chambres?: Array<{
-    id_type_chambre?: string | number | null;
-    prix_achat?: number | string | null;
-    default_pax?: number | string |null;
-    num_chambres?: number | string |null;
-  }> | null;
+    id: number;
+    active: boolean;
+    creation_date: string;
+    end_date: string;
+    etablissement: EtablissementDataType;
+    etablissement_id: number;
+    fractionnement: Fractionnement;
+    fractionnement_id: number;
+    start_date: string;
+    type_chambres: TypeChambre[];
+
 };
 export interface GroupEtablissementDataType {
   key: number;
   name: string;
   status: boolean;
+}
+
+interface Fractionnement {
+  active: boolean;
+  creation_date: string;
+  id: number;
+  name: string;
+}
+
+interface TypeChambre {
+  active: boolean;
+  creation_date: string;
+  default_pax: number | null;
+  num_chambres: string;
+  prix_achat: string;
+  type_chambre: number;
 }
 
 export interface TypeChambreDataType {

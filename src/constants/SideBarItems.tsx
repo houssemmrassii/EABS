@@ -1,6 +1,6 @@
 import React from "react";
 
-import {  DashboardOutlined } from "@ant-design/icons";
+import { DashboardOutlined } from "@ant-design/icons";
 
 import type { MenuProps } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,8 +47,8 @@ const items: MenuItem[] = [
       <Link to="/dashboard/group-etablissement">Group Etablissement</Link>,
       "etab-group-etab"
     ),
-    getItem("Contacts Etablissement", "etab-contact-etab"),
-    getItem("Disponibilité de Chambres", "etab-dispo-chambre"),
+    // getItem("Contacts Etablissement", "etab-contact-etab"),
+    // getItem("Disponibilité de Chambres", "etab-dispo-chambre"),
   ]),
   getItem("Reservation", "reserv", <FontAwesomeIcon icon={faClipboardList} />, [
     getItem("Reservation Intégrale", "reserv-reserv-integral"),
