@@ -71,7 +71,6 @@ const ContractEtablissementForm = (props: Props) => {
       setRefrech(!refrech);
       resetAndClose();
     } catch (error) {
-      console.log(error);
       message.error((error as Error)?.message);
     }
   };

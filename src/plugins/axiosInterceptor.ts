@@ -33,7 +33,7 @@ const displayNotification = (
   });
 };
 // Response interceptor
-axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => {
     // You can modify the response data here
     return response;
@@ -64,7 +64,7 @@ axios.interceptors.response.use(
         const errorMessage =
           error?.response?.data?.message ||
           "Vous n'êtes pas autorisé à accéder à cette ressource.";
-         displayNotification(errorMessage, "bottomLeft", 3);
+        displayNotification(errorMessage, "bottomLeft", 3);
       }
     }
 

@@ -4,8 +4,9 @@ import React, { createContext, useContext, ReactNode } from "react";
 // Define the shape of your authentication context
 interface AuthContextProps {
   isAuthenticated: boolean;
-  login: () => void;
+  login: (data: any) => void;
   logout: () => void;
+  jwtTokenDecoded: any;
 }
 
 // Create the context with an initial state
@@ -25,10 +26,11 @@ interface AuthProviderProps {
 // Create a provider component to wrap your app with
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [jwtTokenDecoded, setJwtTokenDecoded] = React.useState({});
 
-  const login = () => {
-    // Implement your login logic here
+  const login = (loginData: any) => {
     setIsAuthenticated(true);
+    setJwtTokenDecoded(loginData);
   };
 
   const logout = () => {
@@ -42,6 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isAuthenticated,
       login,
       logout,
+      jwtTokenDecoded,
     }),
     [isAuthenticated, login, logout]
   );
