@@ -1,7 +1,7 @@
 import React, { Key } from "react";
 import { getEtablissementService } from "@services/Etablissement";
 import { Badge, Popconfirm, Space, Table, message } from "antd";
-import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
+import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
 import {
   deleteEtablissementGroupsService,
   getEtablissementGroupsService,
@@ -16,12 +16,19 @@ import { EtablissementDataType } from "@/types";
 import UpdateEtablissementForm from "@/components/forms/Etablissement/UpdateEtablissementForm";
 
 const Etablissement: React.FC = () => {
-  const { getColumnSearchProps } = useGlobal();
+  const { getColumnSearchProps, setSelectedEtabRecord } = useGlobal();
   const { tableData, setTableData } = useEtablissementContext();
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<EtablissementDataType | null>(null);
   const [refrech, setRefrech] = useState(false);
   const [groupEtabs, setGroupEtabs] = useState<any>([]);
+  const Navigate = useNavigate();
+
+  const handleDetailsNavigation = (record: EtablissementDataType) => {
+    setSelectedEtabRecord(record);
+    Navigate(`/dashboard/etablissement-details/${record?.id}`);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -151,6 +158,7 @@ const Etablissement: React.FC = () => {
           >
             <DeleteOutlined />
           </Popconfirm>
+          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
         </Space>
       ),
     },

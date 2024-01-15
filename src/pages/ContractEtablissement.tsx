@@ -5,14 +5,17 @@ import {
 } from "@/services/ContractEtablissement";
 import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
 import { ContractEtablissementDataType } from "@/types";
-import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
+import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
 import ContractEtablissementForm from "@forms/ContractEtablissement/ContractEtablissementForm";
 import { Badge, Popconfirm, Space, Tooltip, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Table } from "antd/lib";
 import dayjs from "dayjs";
+import { useGlobal } from "@/context/GlobalContext";
 
 const ContactEtablissement = () => {
+  const { setSelectedContractRecord } = useGlobal();
+  const Navigate = useNavigate();
   const [editing, setEditing] = useState<ContractEtablissementDataType | null>(
     null
   );
@@ -98,16 +101,21 @@ const ContactEtablissement = () => {
           >
             <DeleteOutlined />
           </Popconfirm>
+          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
         </Space>
       ),
     },
   ];
 
+  const handleDetailsNavigation = (record: ContractEtablissementDataType) => {
+    setSelectedContractRecord(record);
+    Navigate(`/dashboard/contract-etablissement-details/${record?.id}`);
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
         const data = await getContractsEtablissement();
-
         setData(data);
       } catch (error) {
         message.error((error as Error)?.message);

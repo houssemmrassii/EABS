@@ -9,6 +9,10 @@ import Highlighter from "react-highlight-words";
 // Define the shape of your authentication context
 interface GlobalContextProps {
   dashboardContent: string | undefined;
+  selectedContractRecord: any | null;
+  setSelectedContractRecord: (value?: any | IFuncUpdater<any> | null) => void;
+  selectedEtabRecord: any | null;
+  setSelectedEtabRecord: (value?: any | IFuncUpdater<any> | null) => void;
   getColumnSearchProps: (dataIndex: any, name: string) => ColumnType<any>;
   setDashboardContent: (
     value?: string | IFuncUpdater<string> | undefined
@@ -38,7 +42,16 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       defaultValue: "Dashboard",
     }
   );
-
+  const [selectedContractRecord, setSelectedContractRecord] =
+    useSessionStorageState("selectedContractRecord", {
+      defaultValue: {},
+    });
+  const [selectedEtabRecord, setSelectedEtabRecord] = useSessionStorageState(
+    "selectedEtabRecord",
+    {
+      defaultValue: {},
+    }
+  );
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
@@ -145,8 +158,20 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       dashboardContent,
       setDashboardContent,
       getColumnSearchProps,
+      selectedContractRecord,
+      setSelectedContractRecord,
+      selectedEtabRecord,
+      setSelectedEtabRecord,
     }),
-    [dashboardContent, setDashboardContent]
+    [
+      dashboardContent,
+      setDashboardContent,
+      selectedContractRecord,
+      setSelectedContractRecord,
+      getColumnSearchProps,
+      selectedEtabRecord,
+      setSelectedEtabRecord,
+    ]
   );
 
   return (
