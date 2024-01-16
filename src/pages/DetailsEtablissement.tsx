@@ -1,14 +1,16 @@
+import UpdateEtablissementForm from "@/components/forms/Etablissement/UpdateEtablissementForm";
 import { useGlobal } from "@/context/GlobalContext";
-import { Col, Descriptions, Row } from "antd";
+import { Descriptions, Divider } from "antd";
 import type { DescriptionsProps } from "antd";
-import React from "react";
 
-type Props = {};
-
-const DetailsEtablissement = (props: Props) => {
+const DetailsEtablissement = () => {
   const { selectedEtabRecord } = useGlobal();
   const [items, setItems] = useState<DescriptionsProps["items"]>([]);
-
+  const [itemsContact, setItemsContact] = useState<DescriptionsProps["items"]>(
+    []
+  );
+  const [itemsInfo, setItemsInfo] = useState<DescriptionsProps["items"]>([]);
+  const [itemsBank, setItemsBank] = useState<DescriptionsProps["items"]>([]);
   useEffect(() => {
     const itemsTemp: DescriptionsProps["items"] = [
       {
@@ -46,6 +48,8 @@ const DetailsEtablissement = (props: Props) => {
         label: "Adresse",
         children: selectedEtabRecord?.adress || "N/A",
       },
+    ];
+    const itemsContactTemp: DescriptionsProps["items"] = [
       {
         key: "8",
         label: "E-mail",
@@ -66,6 +70,9 @@ const DetailsEtablissement = (props: Props) => {
         label: "Portable",
         children: selectedEtabRecord?.num_portable || "N/A",
       },
+    ];
+
+    const itemsInfoTemp: DescriptionsProps["items"] = [
       {
         key: "12",
         label: "Siret",
@@ -91,6 +98,9 @@ const DetailsEtablissement = (props: Props) => {
         label: "Facture calculée",
         children: selectedEtabRecord?.fractionnement_data?.name || "N/A",
       },
+    ];
+
+    const infoBankTemp: DescriptionsProps["items"] = [
       {
         key: "17",
         label: "Banque",
@@ -128,26 +138,36 @@ const DetailsEtablissement = (props: Props) => {
       },
     ];
     setItems(itemsTemp);
+    setItemsContact(itemsContactTemp);
+    setItemsInfo(itemsInfoTemp);
+    setItemsBank(infoBankTemp);
   }, [selectedEtabRecord]);
 
   return (
-    <Row>
-      <Col lg={7}></Col>
-      <Col
-        lg={17}
+    <div>
+      <UpdateEtablissementForm
+        recordData={selectedEtabRecord}
+        external={true}
+      />
+      <div
         style={{
           backgroundColor: "white",
           borderRadius: 13,
           padding: "1rem 1rem",
         }}
       >
-        <Descriptions
-          title={selectedEtabRecord?.name}
-          layout="vertical"
-          items={items}
-        />
-      </Col>
-    </Row>
+        <Descriptions title={selectedEtabRecord?.name} items={items} />
+        <Divider orientation="left">Contacts</Divider>
+        <Descriptions title={""} items={itemsContact} />
+        <Divider orientation="left">
+          Informations d'établissement et de facturation
+        </Divider>
+        <Descriptions title={""} items={itemsInfo} />
+
+        <Divider orientation="left">Coordonnées bancaires</Divider>
+        <Descriptions title={""} items={itemsBank} />
+      </div>
+    </div>
   );
 };
 
