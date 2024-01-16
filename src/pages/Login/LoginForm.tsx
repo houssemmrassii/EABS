@@ -4,12 +4,10 @@ import { LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Card } from "antd";
 import classes from "./LoginForm.module.css";
 import axios from "@/utils/axios/axiosInterceptor";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 
 const LoginForm: React.FC = () => {
-  const navigate = useNavigate();
   const { login } = useAuth();
   const onFinish = (values: any) => {
     axios

@@ -4,7 +4,7 @@ import { DashboardOutlined } from "@ant-design/icons";
 
 import type { MenuProps } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBuilding, faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { faBuilding } from "@fortawesome/free-solid-svg-icons";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
