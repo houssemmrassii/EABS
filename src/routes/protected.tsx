@@ -21,27 +21,27 @@ interface Token {
   exp: number;
 }
 
-const Etablissement = lazyLoad(() => import("@pages/Etablissement"), "default");
+const Etablissement = lazyLoad(() => import("@/pages/Etablissement/Etablissement"), "default");
 
 const GroupEtablissement = lazyLoad(
-  () => import("@pages/GroupEtablissement"),
+  () => import("@/pages/GroupEtablissement/GroupEtablissement"),
   "default"
 );
 
 const ContractEtablissement = lazyLoad(
-  () => import("@pages/ContractEtablissement"),
+  () => import("@/pages/ContratEtablissement/ContractEtablissement"),
   "default"
 );
-const TypeChambre = lazyLoad(() => import("@pages/TypeChambre"), "default");
+const TypeChambre = lazyLoad(() => import("@/pages/TypeChambre/TypeChambre"), "default");
 
 const Dashboard = lazyLoad(() => import("@pages/Dashboard"), "default");
 
 const DetailsContractEtablissement = lazyLoad(
-  () => import("@pages/DetailsContractEtablissement"),
+  () => import("@/pages/ContratEtablissement/DetailsContractEtablissement"),
   "default"
 );
 const DetailsEtablissement = lazyLoad(
-  () => import("@pages/DetailsEtablissement"),
+  () => import("@/pages/Etablissement/DetailsEtablissement"),
   "default"
 );
 
@@ -53,40 +53,47 @@ const PrivateRoutes = () => {
 const getChildrenRoutes = () => {
   let token = localStorage.getItem("token");
   let children = [];
-  if (token) {
-    let decodedToken = jwtDecode<Token>(token);
-    if (decodedToken?.sub) {
-      let privilges = decodedToken?.sub.privileges;
-      if (privilges.includes(import.meta.env.VITE_APP_GET_ETABLISSEMENT)) {
-        children.push({
-          path: "etablissement",
-          element: Etablissement,
-        });
-      }
-      if (
-        privilges.includes(import.meta.env.VITE_APP_GET_GROUPE_ETABLISSEMENT)
-      ) {
-        children.push({
-          path: "group-etablissement",
-          element: GroupEtablissement,
-        });
-      }
-      if (privilges.includes(import.meta.env.VITE_APP_GET_TYPE_CHAMBRE)) {
-        children.push({
-          path: "type-chambre",
-          element: TypeChambre,
-        });
-      }
-      if (
-        privilges.includes(import.meta.env.VITE_APP_GET_CONTRAT_ETABLISSEMENT)
-      ) {
-        children.push({
-          path: "contract-etablissement",
-          element: ContractEtablissement,
-        });
+  try {
+    if (token) {
+      let decodedToken = jwtDecode<Token>(token);
+
+      if (decodedToken?.sub) {
+        let privilges = decodedToken?.sub.privileges;
+        if (privilges.includes(import.meta.env.VITE_APP_GET_ETABLISSEMENT)) {
+          children.push({
+            path: "etablissement",
+            element: Etablissement,
+          });
+        }
+        if (
+          privilges.includes(import.meta.env.VITE_APP_GET_GROUPE_ETABLISSEMENT)
+        ) {
+          children.push({
+            path: "group-etablissement",
+            element: GroupEtablissement,
+          });
+        }
+        if (privilges.includes(import.meta.env.VITE_APP_GET_TYPE_CHAMBRE)) {
+          children.push({
+            path: "type-chambre",
+            element: TypeChambre,
+          });
+        }
+        if (
+          privilges.includes(import.meta.env.VITE_APP_GET_CONTRAT_ETABLISSEMENT)
+        ) {
+          children.push({
+            path: "contract-etablissement",
+            element: ContractEtablissement,
+          });
+        }
       }
     }
+  } catch (InvalidTokenError) {
+    localStorage.clear();
+    window.location.reload();
   }
+
   return [
     {
       index: true,

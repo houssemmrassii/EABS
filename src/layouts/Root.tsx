@@ -17,12 +17,13 @@ import {
   theme,
 } from "antd";
 
-import items from "../constants/SideBarItems";
 import Integral from "@assets/svg/integral.svg";
+import { useSideBarItems } from "@/hooks/useSideBarItems";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const Root: React.FC = () => {
+  const items = useSideBarItems();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -55,7 +56,6 @@ const Root: React.FC = () => {
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
         >
-          <div className="demo-logo-vertical" />
           <Menu theme="dark" mode="inline" items={items} />
         </Sider>
         <Layout className="site-layout">

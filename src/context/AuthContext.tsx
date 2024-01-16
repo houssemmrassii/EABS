@@ -34,8 +34,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    // Implement your logout logic here
-
     setIsAuthenticated(false);
   };
 

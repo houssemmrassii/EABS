@@ -17,7 +17,6 @@ const LoginForm: React.FC = () => {
         let decodedToken = jwtDecode(token);
         login(decodedToken?.sub);
         localStorage.setItem("token", res.data.access_token);
-        //navigate("/Dashboard");
         window.location.reload()
       });
   };
