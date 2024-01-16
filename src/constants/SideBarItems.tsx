@@ -50,13 +50,13 @@ const items: MenuItem[] = [
     // getItem("Contacts Etablissement", "etab-contact-etab"),
     // getItem("Disponibilité de Chambres", "etab-dispo-chambre"),
   ]),
-  getItem("Reservation", "reserv", <FontAwesomeIcon icon={faClipboardList} />, [
+  /* getItem("Reservation", "reserv", <FontAwesomeIcon icon={faClipboardList} />, [
     getItem("Reservation Intégrale", "reserv-reserv-integral"),
     getItem("Reservation", "reserv-reserv"),
     getItem("Commande", "reserv-commande"),
     getItem("Résa. à prolonger", "reserv-resa-prolonger"),
     getItem("Demandes d'hébergement", "reserv-demande-hebergement"),
-  ]),
+  ]), */
 ];
 
 export default items;

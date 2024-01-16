@@ -27,6 +27,7 @@ const GroupEtablissement = lazyLoad(
   () => import("@pages/GroupEtablissement"),
   "default"
 );
+
 const ContractEtablissement = lazyLoad(
   () => import("@pages/ContractEtablissement"),
   "default"
@@ -34,6 +35,15 @@ const ContractEtablissement = lazyLoad(
 const TypeChambre = lazyLoad(() => import("@pages/TypeChambre"), "default");
 
 const Dashboard = lazyLoad(() => import("@pages/Dashboard"), "default");
+
+const DetailsContractEtablissement = lazyLoad(
+  () => import("@pages/DetailsContractEtablissement"),
+  "default"
+);
+const DetailsEtablissement = lazyLoad(
+  () => import("@pages/DetailsEtablissement"),
+  "default"
+);
 
 const PrivateRoutes = () => {
   const token = localStorage.getItem("token");
@@ -81,6 +91,14 @@ const getChildrenRoutes = () => {
     {
       index: true,
       element: Dashboard,
+    },
+    {
+      path: "etablissement-details/:id",
+      element: DetailsEtablissement,
+    },
+    {
+      path: "contract-etablissement-details/:id",
+      element: DetailsContractEtablissement,
     },
     ...children,
   ];

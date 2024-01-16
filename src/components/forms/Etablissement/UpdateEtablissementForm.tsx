@@ -16,9 +16,7 @@ import {
 
 import { PlusOutlined, BuildOutlined } from "@ant-design/icons";
 
-import {
-  updateEtablissementService,
-} from "@services/Etablissement";
+import { updateEtablissementService } from "@services/Etablissement";
 import {
   getDepartementsByRegion,
   getFractions,
@@ -37,15 +35,16 @@ import "react-international-phone/style.css";
 
 type Props = {
   recordData: EtablissementDataType | undefined;
-  setEditing: React.Dispatch<
+  setEditing?: React.Dispatch<
     React.SetStateAction<EtablissementDataType | null>
   >;
-  refrech: boolean;
-  setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
+  refrech?: boolean;
+  setRefrech?: React.Dispatch<React.SetStateAction<boolean>>;
+  external?: boolean;
 };
 
 const UpdateEtablissementForm = (props: Props) => {
-  const { recordData, setEditing, refrech, setRefrech } = props;
+  const { recordData, setEditing, refrech, setRefrech, external } = props;
 
   const [active, setActive] = useState(false);
   const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
@@ -58,7 +57,9 @@ const UpdateEtablissementForm = (props: Props) => {
   const resetAndClose = () => {
     form.resetFields();
     setActive(false);
-    setEditing(null);
+    if (setEditing) {
+      setEditing(null);
+    }
   };
 
   const onFinish = async (values: any) => {
@@ -66,9 +67,15 @@ const UpdateEtablissementForm = (props: Props) => {
       await updateEtablissementService(recordData?.id as number, values);
 
       message.success("L'établissements a été modifiée avec succès.");
-      setRefrech(!refrech);
-      setActive(false);
-      setEditing(null);
+      if (!external) {
+        if (setRefrech) {
+          setRefrech(!refrech);
+        }
+        setActive(false);
+        if (setEditing) {
+          setEditing(null);
+        }
+      }
     } catch (error) {
       console.error((error as Error)?.message);
     }
