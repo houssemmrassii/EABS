@@ -59,7 +59,9 @@ export function useSideBarItems() {
           [...etablissement_children]
         ),
         getItem("Client", "clients", <FontAwesomeIcon icon={faUser} />, [
-          getItem("Groupe Client", "gc"),
+          getItem( <Link to="/dashboard/groupe-client">
+          Groupe Client
+        </Link>, "gc"),
           getItem("Administration Client", "ac"),
           getItem("Fiche Client", "fc"),
           getItem("Contact Client", "cc"),

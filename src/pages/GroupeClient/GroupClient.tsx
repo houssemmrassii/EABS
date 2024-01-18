@@ -2,14 +2,14 @@ import React, { Key } from "react";
 import { Badge, Flex, Popconfirm, Table } from "antd";
 import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
 
-import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext";
+import { useGroupClientContext } from "@/context/GroupClientContext";
 import {
-  getEtablissementGroupsService,
-  deleteEtablissementGroupsService,
-} from "@services/EtablissementGroup";
+  getClientGroupsService,
+  deleteClientGroupsService,
+} from "@services/ClientGroup";
 
-import UpdateGroupEtablissementForm from "@forms/EtablissementGroup/UpdateGroupEtablissementForm";
-import GroupEtablissementForm from "@forms/EtablissementGroup/GroupEtablissementForm";
+import UpdateGroupClientForm from "@forms/ClientGroup/UpdateGroupClientForm";
+import GroupClientForm from "@forms/ClientGroup/GroupClientForm";
 
 import type { ColumnsType } from "antd/es/table";
 import { useGlobal } from "@/context/GlobalContext";
@@ -20,16 +20,16 @@ interface DataType {
   status: boolean;
 }
 
-const GroupEtablissement: React.FC = () => {
+const GroupClient: React.FC = () => {
   const { getColumnSearchProps } = useGlobal();
-  const { tableData, setTableData } = useGroupEtablissementContext();
+  const { tableData, setTableData } = useGroupClientContext();
   const [loading, setloading] = useState(true);
   const [editing, setEditing] = useState<Key | null>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getEtablissementGroupsService();
+        const result = await getClientGroupsService();
         let groups = result.groups;
         let prepareGroups = groups.map(
           (group: { id: number; name: string; active: boolean }) => ({
@@ -54,7 +54,7 @@ const GroupEtablissement: React.FC = () => {
   const handleDelete = async (key: React.Key) => {
     if (tableData) {
       try {
-        await deleteEtablissementGroupsService(key as number);
+        await deleteClientGroupsService(key as number);
         setTimeout(() => {
           const newData = tableData.filter((item) => item.key !== key);
           setTableData(newData);
@@ -68,9 +68,9 @@ const GroupEtablissement: React.FC = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Groupe d'établissement",
+      title: "Groupe Client",
       dataIndex: "name",
-      ...getColumnSearchProps("name", "Groupe d'établissement"),
+      ...getColumnSearchProps("name", "Groupe Client"),
     },
     {
       title: "Statut",
@@ -119,9 +119,9 @@ const GroupEtablissement: React.FC = () => {
   ];
   return (
     <>
-      <GroupEtablissementForm />
+      <GroupClientForm />
       {editing && (
-        <UpdateGroupEtablissementForm
+        <UpdateGroupClientForm
           idRecord={editing}
           setEditing={setEditing}
         />
@@ -137,4 +137,4 @@ const GroupEtablissement: React.FC = () => {
   );
 };
 
-export default GroupEtablissement;
+export default GroupClient;

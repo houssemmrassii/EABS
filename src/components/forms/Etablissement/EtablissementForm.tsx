@@ -14,7 +14,7 @@ import {
   Space,
 } from "antd";
 
-import { PlusOutlined, BuildOutlined } from "@ant-design/icons";
+import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
 import { postEtablissementService } from "@services/Etablissement";
 import {
@@ -166,9 +166,9 @@ const EtablissementForm = (props: Props) => {
     <div>
       <Collapse
         expandIcon={({ isActive }) => (
-          <PlusOutlined
+          <CaretLeftFilled
             style={{ fontSize: "20px" }}
-            rotate={isActive ? 90 : 0}
+            rotate={isActive ? -90 : 0}
           />
         )}
         activeKey={active ? "1" : "0"}

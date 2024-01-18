@@ -7,6 +7,7 @@ import { EtablisementProvider } from "./context/EtablissementContext";
 import { BrowserRouter as Router } from "react-router-dom";
 import frFR from "antd/locale/fr_FR";
 import { ConfigProvider } from "antd";
+import { GroupClientProvider } from "./context/GroupClientContext";
 
 const Routes = () => {
   return useRoutes(routes);
@@ -18,11 +19,13 @@ const App: React.FC = () => {
       <Router>
         <AuthProvider>
           <GlobalProvider>
-            <GroupEtablisementProvider>
-              <EtablisementProvider>
-                <Routes />
-              </EtablisementProvider>
-            </GroupEtablisementProvider>
+            <GroupClientProvider>
+              <GroupEtablisementProvider>
+                <EtablisementProvider>
+                  <Routes />
+                </EtablisementProvider>
+              </GroupEtablisementProvider>
+            </GroupClientProvider>
           </GlobalProvider>
         </AuthProvider>
       </Router>

@@ -111,7 +111,7 @@ const TypeChambre: React.FC = () => {
     {
       title: "Paramètres",
       render: (record: TypeChambreDataType) => (
-        <Space>
+        <Space size="large">
           <EditTwoTone onClick={() => setEditing(record)} />{" "}
           <Popconfirm
             title="Vous êtes sûr de supprimer?"
@@ -119,7 +119,7 @@ const TypeChambre: React.FC = () => {
             okText="Confirmer"
             cancelText="Annuler"
           >
-            <DeleteOutlined />
+            <DeleteOutlined style={{color:"red"}} />
           </Popconfirm>
         </Space>
       ),

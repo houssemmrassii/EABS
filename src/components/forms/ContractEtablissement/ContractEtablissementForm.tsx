@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { CaretLeftFilled } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -142,9 +142,9 @@ const ContractEtablissementForm = (props: Props) => {
     <div style={{ marginBottom: "2rem" }}>
       <Collapse
         expandIcon={({ isActive }) => (
-          <PlusOutlined
+          <CaretLeftFilled
             style={{ fontSize: "20px" }}
-            rotate={isActive ? 90 : 0}
+            rotate={isActive ? -90 : 0}
           />
         )}
         activeKey={active ? "1" : "0"}
@@ -228,7 +228,7 @@ const ContractEtablissementForm = (props: Props) => {
                 </Row>
                 {selectedEtab && (
                   <>
-                    <Divider orientation="center">Intermédiaire</Divider>
+                    {/* <Divider orientation="center">Intermédiaire</Divider>
                     <Row gutter={24} justify={"center"}>
                       <Col
                         span={8}
@@ -245,7 +245,7 @@ const ContractEtablissementForm = (props: Props) => {
                           <Checkbox value={true}>Intermédiaire</Checkbox>
                         </Form.Item>
                       </Col>
-                    </Row>
+                    </Row> */}
                     <Divider orientation="center">Fractionnement</Divider>
                     <Row gutter={24} justify={"center"}>
                       <Col span={8}>

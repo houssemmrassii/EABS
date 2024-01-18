@@ -59,7 +59,11 @@ export interface GroupEtablissementDataType {
   name: string;
   status: boolean;
 }
-
+export interface GroupClientDataType {
+  key: number;
+  name: string;
+  status: boolean;
+}
 interface Fractionnement {
   active: boolean;
   creation_date: string;

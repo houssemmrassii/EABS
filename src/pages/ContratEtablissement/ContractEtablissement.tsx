@@ -91,17 +91,17 @@ const ContactEtablissement = () => {
     {
       title: "Paramètres",
       render: (_, record) => (
-        <Space>
-          <EditTwoTone onClick={() => setEditing(record)} />{" "}
+        <Space size="large">
+          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
+          <EditTwoTone onClick={() => setEditing(record)} />
           <Popconfirm
             title="Vous êtes sûr de supprimer?"
             onConfirm={() => handleDelete(record?.id)}
             okText="Confirmer"
             cancelText="Annuler"
           >
-            <DeleteOutlined />
+            <DeleteOutlined style={{color:"red"}} />
           </Popconfirm>
-          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
         </Space>
       ),
     },

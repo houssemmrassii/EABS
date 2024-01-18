@@ -1,6 +1,6 @@
 import { postTypeChambre } from "@/services/Factory";
 import { TypeChambreDataType } from "@/types";
-import { PlusOutlined } from "@ant-design/icons";
+import { CaretLeftFilled } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -53,9 +53,9 @@ const TypeChambreForm = (props: Props) => {
     <div>
       <Collapse
         expandIcon={({ isActive }) => (
-          <PlusOutlined
+          <CaretLeftFilled
             style={{ fontSize: "20px" }}
-            rotate={isActive ? 90 : 0}
+            rotate={isActive ? -90 : 0}
           />
         )}
         activeKey={active ? "1" : "0"}
@@ -74,44 +74,47 @@ const TypeChambreForm = (props: Props) => {
                 initialValues={{ active: true }}
                 onFinish={onFinish}
                 form={form}
-                size="large"
               >
-                <Row gutter={24}>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Type Chambre"
-                      name="name"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez sélectionner le type de chambre !",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Type de pension"
-                      name="type_pension"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez sélectionner le type de pension !",
-                        },
-                      ]}
-                    >
-                      <Select>
-                        <Select.Option value="Demi-pension">
-                          Demi-pension
-                        </Select.Option>
-                        <Select.Option value="Pension complète">
-                          Pension complète
-                        </Select.Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
+                <Row gutter={10}>
+                  <Row gutter={10}>
+                    <Col span={12}>
+                      <Form.Item
+                        label="Type Chambre"
+                        name="name"
+                        rules={[
+                          {
+                            required: true,
+                            message:
+                              "Veuillez sélectionner le type de chambre !",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        label="Type de pension"
+                        name="type_pension"
+                        rules={[
+                          {
+                            required: true,
+                            message:
+                              "Veuillez sélectionner le type de pension !",
+                          },
+                        ]}
+                      >
+                        <Select>
+                          <Select.Option value="Demi-pension">
+                            Demi-pension
+                          </Select.Option>
+                          <Select.Option value="Pension complète">
+                            Pension complète
+                          </Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
                   <Col span={12}>
                     <Form.Item
                       label="Modalite d'achat"

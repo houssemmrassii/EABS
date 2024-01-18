@@ -21,10 +21,18 @@ interface Token {
   exp: number;
 }
 
-const Etablissement = lazyLoad(() => import("@/pages/Etablissement/Etablissement"), "default");
+const Etablissement = lazyLoad(
+  () => import("@/pages/Etablissement/Etablissement"),
+  "default"
+);
 
 const GroupEtablissement = lazyLoad(
   () => import("@/pages/GroupEtablissement/GroupEtablissement"),
+  "default"
+);
+
+const GroupClient = lazyLoad(
+  () => import("@/pages/GroupeClient/GroupClient"),
   "default"
 );
 
@@ -32,7 +40,10 @@ const ContractEtablissement = lazyLoad(
   () => import("@/pages/ContratEtablissement/ContractEtablissement"),
   "default"
 );
-const TypeChambre = lazyLoad(() => import("@/pages/TypeChambre/TypeChambre"), "default");
+const TypeChambre = lazyLoad(
+  () => import("@/pages/TypeChambre/TypeChambre"),
+  "default"
+);
 
 const Dashboard = lazyLoad(() => import("@pages/Dashboard"), "default");
 
@@ -64,6 +75,10 @@ const getChildrenRoutes = () => {
             path: "etablissement",
             element: Etablissement,
           });
+          children.push({
+            path: "etablissement-details/:id",
+            element: DetailsEtablissement,
+          });
         }
         if (
           privilges.includes(import.meta.env.VITE_APP_GET_GROUPE_ETABLISSEMENT)
@@ -86,6 +101,10 @@ const getChildrenRoutes = () => {
             path: "contract-etablissement",
             element: ContractEtablissement,
           });
+          children.push({
+            path: "contract-etablissement-details/:id",
+            element: DetailsContractEtablissement,
+          });
         }
       }
     }
@@ -100,12 +119,12 @@ const getChildrenRoutes = () => {
       element: Dashboard,
     },
     {
-      path: "etablissement-details/:id",
-      element: DetailsEtablissement,
+      path: "groupe-client-details/:id",
+      element: DetailsContractEtablissement,
     },
     {
-      path: "contract-etablissement-details/:id",
-      element: DetailsContractEtablissement,
+      path: "groupe-client",
+      element: GroupClient,
     },
     ...children,
   ];

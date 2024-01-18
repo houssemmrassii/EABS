@@ -62,7 +62,7 @@ const GroupEtablissementForm: React.FC = () => {
             key: "1",
             label: (
               <Typography.Text strong>
-                Ajouter un groupe établissement
+                Ajouter un groupe client
               </Typography.Text>
             ),
             children: (
@@ -80,7 +80,7 @@ const GroupEtablissementForm: React.FC = () => {
                 >
                   <Col className="gutter-row" span={6}>
                     <Form.Item
-                      label="Group établissement :"
+                      label="Group client :"
                       name="name"
                       rules={[
                         {

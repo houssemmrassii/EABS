@@ -147,18 +147,17 @@ const Etablissement: React.FC = () => {
       title: "Paramètres",
       dataIndex: "Paramètres",
       render: (_, record) => (
-        <Space>
+        <Space size="large" >
+          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
           <EditTwoTone onClick={() => setEditing(record)} />
-
           <Popconfirm
             title="Vous êtes sûr de supprimer?"
             onConfirm={() => handleDelete(record?.id)}
             okText="Confirmer"
             cancelText="Annuler"
           >
-            <DeleteOutlined />
+            <DeleteOutlined style={{color:"red"}} />
           </Popconfirm>
-          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
         </Space>
       ),
     },
