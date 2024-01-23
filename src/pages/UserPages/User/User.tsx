@@ -1,5 +1,5 @@
 import React, { Key } from "react";
-import { getUserService } from "@services/User";
+import { getUserService, getUsersRolesService } from "@services/User";
 import { Badge, Popconfirm, Space, Table, message } from "antd";
 import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
 
@@ -18,21 +18,33 @@ const User: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<UserDataType | null>(null);
   const [refrech, setRefrech] = useState(false);
-  const [groupEtabs, setGroupEtabs] = useState<any>([]);
+  const [rolesUsers, setRolesUsers] = useState<any>([]);
   const Navigate = useNavigate();
 
-  const handleDetailsNavigation = (record: UserDataType) => {
-    setSelectedEtabRecord(record);
-    Navigate(`/dashboard/etablissement-details/${record?.id}`);
-  };
 
   useEffect(() => {
+    async function fetchGroupEtab() {
+      try {
+        const result = await getUsersRolesService();
+        const groups = result?.roles?.map((element: any) => {
+          return {
+            text: element?.name,
+            value: element?.name,
+          };
+        });
+
+        setRolesUsers(groups);
+      } catch (error) {
+        //message.error((error as Error)?.message);
+      }
+    }
+
+    fetchGroupEtab();
     const fetchData = async () => {
       try {
         const result = await getUserService();
 
-        setTableData(result?.etablissements);
-
+        setTableData(result?.users);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,23 +68,23 @@ const User: React.FC = () => {
   const columns: ColumnsType<UserDataType> = [
     {
       title: "Utilisateur",
-      dataIndex: "name",
-      key: "name",
-      ...getColumnSearchProps("name", "Utilisateur"),
+      dataIndex: "username",
+      key: "username",
+      ...getColumnSearchProps("username", "Utilisateur"),
     },
     {
-      title: "G. Utilisateur",
+      title: "Groupe Utilisateur",
       dataIndex: "group_data.name",
       key: "groupName",
-      filters: groupEtabs,
-      onFilter: (value, record) => record?.group_data?.name === value,
-      render: (_, record: UserDataType) => <>{record?.group_data?.name}</>,
+      filters: rolesUsers,
+      onFilter: (value, record) => record?.username === value,
+      render: (_, record: UserDataType) => <>{record?.username}</>,
     },
     {
       title: "N° Tél",
-      dataIndex: "num_telephone",
-      key: "NumTel",
-      ...getColumnSearchProps("num_telephone", "N° Tél"),
+      dataIndex: "tel",
+      key: "tel",
+      ...getColumnSearchProps("tel", "N° Tél"),
     },
     {
       title: "Email",
@@ -108,7 +120,6 @@ const User: React.FC = () => {
       dataIndex: "Paramètres",
       render: (_, record) => (
         <Space size="large">
-          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
           <EditTwoTone onClick={() => setEditing(record)} />
           <Popconfirm
             title="Vous êtes sûr de supprimer?"

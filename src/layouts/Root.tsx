@@ -76,19 +76,21 @@ const Root: React.FC = () => {
                       height: 64,
                     }}
                   />
-                  <Button
-                    type="text"
-                    icon={
-                      <>
-                        <DashboardOutlined /> Tableau de bord
-                      </>
-                    }
-                    style={{
-                      fontSize: "16px",
-                      width: 150,
-                      height: 64,
-                    }}
-                  />
+                  <Link to="/dashboard">
+                    <Button
+                      type="text"
+                      icon={
+                        <>
+                          <DashboardOutlined /> Tableau de bord
+                        </>
+                      }
+                      style={{
+                        fontSize: "16px",
+                        width: 150,
+                        height: 64,
+                      }}
+                    />
+                  </Link>
                   <Tooltip title="Résa intégrale">
                     <Button
                       type="text"

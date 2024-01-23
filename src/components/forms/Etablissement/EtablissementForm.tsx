@@ -151,7 +151,7 @@ const EtablissementForm = (props: Props) => {
 
         setFractions(temp);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //message.error((error as Error)?.message);
       }
     }
 

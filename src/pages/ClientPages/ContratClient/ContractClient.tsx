@@ -118,7 +118,7 @@ const ContactClient = () => {
         const data = await getContractsClient();
         setData(data);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //message.error((error as Error)?.message);
       }
     }
     fetchData();
@@ -137,7 +137,7 @@ const ContactClient = () => {
 
         setGroupClients(groups);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //message.error((error as Error)?.message);
       }
     }
 

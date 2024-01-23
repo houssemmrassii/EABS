@@ -191,7 +191,7 @@ const UpdateEtablissementForm = (props: Props) => {
           fractionnement: recordData?.id_fractionnement,
         });
       } catch (error) {
-        message.error((error as Error)?.message);
+        //message.error((error as Error)?.message);
       }
     }
 

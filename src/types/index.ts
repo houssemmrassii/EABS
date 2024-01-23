@@ -43,45 +43,13 @@ export interface EtablissementDataType {
 
 export interface UserDataType {
   key: number;
-  status?: boolean;
+  id: number;
   active?: boolean;
-  address?: string;
-  adresse_banque?: null | string;
-  banque?: null | string;
-  bic?: null | string;
-  code_banque?: null | string;
-  code_guichet?: null | string;
-  code_naf?: null | string;
-  code_postal?: string;
-  compte_banque?: null | string;
-  creation_date?: string;
-  departments?: string;
   email?: string;
-  fractionnement_data?: {
-    active?: boolean;
-    creation_date?: string;
-    id?: number;
-    name?: string;
-  };
-  group_data?: {
-    active?: boolean;
-    creation_date?: string;
-    id?: number;
-    name?: string;
-  };
-  group_id?: number;
-  iban?: null | string;
-  id?: number;
-  id_fractionnement?: number;
-  immatriculation?: null | string;
-  name?: string;
-  num_fax?: string;
-  num_portable?: string;
-  num_telephone?: string;
-  region?: string;
-  siret?: null | string;
-  tva_instra_communautaire?: null | string;
-  ville?: string;
+  role_id?: number;
+  username?: string;
+  gender?:string
+  tel?:string
 }
 export interface ClientDataType {
   key: number;
