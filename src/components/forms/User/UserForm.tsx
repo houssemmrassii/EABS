@@ -14,16 +14,19 @@ import {
   Space,
 } from "antd";
 
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  BuildOutlined,
+  CaretLeftFilled,
+} from "@ant-design/icons";
 
-import { postEtablissementService } from "@services/Etablissement";
+import { postUserService } from "@services/User";
 import {
   getDepartementsByRegion,
   getFractions,
   getRegions,
   getVillesByDepartment,
 } from "@/services/Factory";
-import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
 import { SelectTOptionType, SelectTOptionTypeWithId } from "@/types";
 
 import { PhoneInput } from "react-international-phone";
@@ -34,7 +37,7 @@ type Props = {
   refrech: boolean;
 };
 
-const EtablissementForm = (props: Props) => {
+const UserForm = (props: Props) => {
   const { refrech, setRefrech } = props;
   const [active, setActive] = useState(false);
   const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
@@ -51,9 +54,9 @@ const EtablissementForm = (props: Props) => {
 
   const onFinish = async (values: any) => {
     try {
-      await postEtablissementService(values);
+      await postUserService(values);
       setRefrech(!refrech);
-      message.success("L'établissements a été ajouté avec succès.");
+      message.success("L'utilisateurs a été ajouté avec succès.");
     } catch (error) {
       message.error((error as Error)?.message);
     }
@@ -121,23 +124,6 @@ const EtablissementForm = (props: Props) => {
       }
     }
 
-    async function fetchGroupEtab() {
-      try {
-        const result = await getEtablissementGroupsService();
-        const groups = result?.groups?.map((element: any) => {
-          return {
-            label: element?.name,
-            value: element?.id,
-          };
-        });
-
-        setGroupEtabs(groups);
-      } catch (error) {
-        message.error((error as Error)?.message);
-        // Handle the error if needed
-      }
-    }
-
     async function fetchFractions() {
       try {
         const result = await getFractions();
@@ -156,8 +142,6 @@ const EtablissementForm = (props: Props) => {
     }
 
     fetchFractions();
-
-    fetchGroupEtab();
 
     fetchRegions();
   }, []);
@@ -178,7 +162,7 @@ const EtablissementForm = (props: Props) => {
           {
             key: "1",
             label: (
-              <Typography.Text strong>Ajouter un établissement</Typography.Text>
+              <Typography.Text strong>Ajouter un utilisateur</Typography.Text>
             ),
             children: (
               <Form
@@ -192,19 +176,51 @@ const EtablissementForm = (props: Props) => {
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item
-                      label="Établissement:"
+                      name="gender"
+                      label="Civilité"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez selectionner civilité !",
+                        },
+                      ]}
+                    >
+                      <Select
+                        options={[
+                          {
+                            label: "N/A",
+                            value: "N/A",
+                          },
+                          {
+                            label: "Monsieur",
+                            value: "Monsieur",
+                          },
+                          {
+                            label: "Madame",
+                            value: "Madame",
+                          },
+                          {
+                            label: "Mademoiselle",
+                            value: "Mademoiselle",
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Nom et prénom utilisateur:"
                       name="name"
                       rules={[
                         {
                           required: true,
-                          message:
-                            "Veuillez saisir le nom du l'établissement !",
+                          message: "Veuillez saisir le nom et prénom du l'utilisateur !",
                         },
                       ]}
                     >
                       <Input
                         prefix={<BuildOutlined />}
-                        placeholder="Nom établissement"
+                        placeholder="Nom utilisateur"
                       />
                     </Form.Item>
                   </Col>
@@ -212,71 +228,12 @@ const EtablissementForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       name="group_id"
-                      label="Group établissement:"
+                      label="Group utilisateur:"
                       required
                     >
                       <Select options={groupEtabs} />
                     </Form.Item>
                   </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="region" label="Régions" required>
-                      <Select options={regions} onChange={handleChangeRegion} />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="departments" label="Départements" required>
-                      <Select
-                        onChange={handleChangeDepartment}
-                        options={departments}
-                        disabled={departments?.length === 0}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="ville" label="Ville" required>
-                      <Select
-                        options={cities}
-                        disabled={cities?.length === 0}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Code Postal:"
-                      name="code_postal"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez saisir le code postal !",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Code Postal"
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Adresse:"
-                      name="adress"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez saisir l'adress' !",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Divider orientation="center">Contacts</Divider>
 
                   <Col span={8}>
                     <Form.Item
@@ -292,15 +249,21 @@ const EtablissementForm = (props: Props) => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
-                    <Form.Item label="Fax" name="num_fax">
-                      <PhoneInput
-                        style={{ width: "100%" }}
-                        defaultCountry="fr"
-                      />
+                  <Col span={8}>
+                    <Form.Item
+                      label="Mot de passe :"
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir ce champ !",
+                        },
+                      ]}
+                    >
+                      <Input type="password" />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
+                  <Col span={8}>
                     <Form.Item
                       label="Num. de tél."
                       name="num_telephone"
@@ -317,57 +280,6 @@ const EtablissementForm = (props: Props) => {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
-                    <Form.Item label="Portable" name="num_portable">
-                      <PhoneInput
-                        style={{ width: "100%" }}
-                        defaultCountry="fr"
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Divider orientation="center">
-                    Informations d'établissement et de facturation
-                  </Divider>
-                  <Col span={8}>
-                    <Form.Item label="Siret" name="siret">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Immatriculation" name="immatriculation">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code NAF" name="code_naf">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label="TVA intra-communautaire"
-                      name="tva_instra_communautaire"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Facture calculée"
-                      name="fractionnement"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez selectionner Facture calculée !",
-                        },
-                      ]}
-                    >
-                      <Select options={fractions} />
-                    </Form.Item>
-                  </Col>
-
                   <Col span={8}>
                     <Form.Item name="active" label="État">
                       <Select
@@ -383,49 +295,6 @@ const EtablissementForm = (props: Props) => {
                           },
                         ]}
                       />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Divider orientation="center">
-                  Coordonnées bancaires (facultatif)
-                </Divider>
-                <Row gutter={24}>
-                  <Col span={8}>
-                    <Form.Item label="Banque" name="banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label="Adresse de la banque"
-                      name="adresse_banque"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code Banque" name="code_banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code Guichet" name="code_guichet">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Compte" name="compte_banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code IBAN" name="iban">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code BIC" name="bic">
-                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -454,4 +323,4 @@ const EtablissementForm = (props: Props) => {
   );
 };
 
-export default EtablissementForm;
+export default UserForm;

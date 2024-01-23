@@ -1,6 +1,6 @@
 import { MenuItem, getItem } from "@/utils/funcs/getItem";
 import { getDecodedToken } from "@/utils/localStorageFuncs";
-import { faBuilding, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBuilding, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function useSideBarItems() {
@@ -59,11 +59,25 @@ export function useSideBarItems() {
           [...etablissement_children]
         ),
         getItem("Client", "clients", <FontAwesomeIcon icon={faUser} />, [
-          getItem("Groupe Client", "gc"),
-          getItem("Administration Client", "ac"),
-          getItem("Fiche Client", "fc"),
-          getItem("Contact Client", "cc"),
+          getItem(
+            <Link to="/dashboard/groupe-client">Groupe Client</Link>,
+            "gc"
+          ),
+          getItem(
+            <Link to="/dashboard/client">Administration Client</Link>,
+            "ac"
+          ),
+          getItem(
+            <Link to="/dashboard/contrat-client">Contrat Client</Link>,
+            "cc"
+          ),
+          getItem("Pensionnaires", "fc"),
         ]),
+        getItem(
+          <Link to="/dashboard/utilisateurs">Utilisateurs</Link>,
+          "ut",
+          <FontAwesomeIcon icon={faUsers} />
+        ),
       ]);
     }
   }, []);

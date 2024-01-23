@@ -17,9 +17,9 @@ import {
 
 import TypeChamListForm from "./TypeChamListForm";
 import { getFractions, getTypeChambre } from "@/services/Factory";
-import { getEtablissementService } from "@/services/Etablissement";
+import { getClientService } from "@/services/Client";
 import dayjs from "dayjs";
-import { postContractEtablissement } from "@/services/ContractEtablissement";
+import { postContractClient } from "@/services/ContractClient";
 
 type Props = {
   refrech: boolean;
@@ -28,11 +28,11 @@ type Props = {
 
 const { RangePicker } = DatePicker;
 
-const ContractEtablissementForm = (props: Props) => {
+const ContractClientForm = (props: Props) => {
   const { refrech, setRefrech } = props;
   const [dateRange, setDateRange] = useState<number | null>(null);
   const [active, setActive] = useState(false);
-  const [etablissements, setEtablissements] = useState<any>([]);
+  const [clients, setClients] = useState<any>([]);
   const [rooms, setRooms] = useState<any>([]);
   const [fractions, setFractions] = useState<any>([]);
   const [selectedEtab, setSelectedEtab] = useState<any>(null);
@@ -66,7 +66,7 @@ const ContractEtablissementForm = (props: Props) => {
         }),
       };
 
-      await postContractEtablissement(payload);
+      await postContractClient(payload);
 
       setRefrech(!refrech);
       resetAndClose();
@@ -118,16 +118,16 @@ const ContractEtablissementForm = (props: Props) => {
 
     const fetchEtabs = async () => {
       try {
-        const result = await getEtablissementService();
+        const result = await getClientService();
 
-        const temp = result?.etablissements?.map((elem: any) => {
+        const temp = result?.clients?.map((elem: any) => {
           return {
             label: elem?.name,
             value: elem?.id,
           };
         });
 
-        setEtablissements(temp);
+        setClients(temp);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -155,7 +155,7 @@ const ContractEtablissementForm = (props: Props) => {
             key: "1",
             label: (
               <Typography.Text strong>
-                Ajouter un contract d'établissement
+                Ajouter un contract client
               </Typography.Text>
             ),
             children: (
@@ -170,11 +170,11 @@ const ContractEtablissementForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       name="etablissement"
-                      label="Établissement"
+                      label="Client"
                       rules={[{ required: true, message: "Champ requis" }]}
                     >
                       <Select
-                        options={etablissements}
+                        options={clients}
                         onChange={(e) => setSelectedEtab(e)}
                       />
                     </Form.Item>
@@ -302,4 +302,4 @@ const ContractEtablissementForm = (props: Props) => {
   );
 };
 
-export default ContractEtablissementForm;
+export default ContractClientForm;

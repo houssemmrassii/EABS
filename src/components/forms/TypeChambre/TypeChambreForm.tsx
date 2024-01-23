@@ -1,6 +1,6 @@
 import { postTypeChambre } from "@/services/Factory";
 import { TypeChambreDataType } from "@/types";
-import { PlusOutlined } from "@ant-design/icons";
+import { CaretLeftFilled } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -53,9 +53,9 @@ const TypeChambreForm = (props: Props) => {
     <div>
       <Collapse
         expandIcon={({ isActive }) => (
-          <PlusOutlined
+          <CaretLeftFilled
             style={{ fontSize: "20px" }}
-            rotate={isActive ? 90 : 0}
+            rotate={isActive ? -90 : 0}
           />
         )}
         activeKey={active ? "1" : "0"}
@@ -74,7 +74,6 @@ const TypeChambreForm = (props: Props) => {
                 initialValues={{ active: true }}
                 onFinish={onFinish}
                 form={form}
-                size="large"
               >
                 <Row gutter={24}>
                   <Col span={12}>

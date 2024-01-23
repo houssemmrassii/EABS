@@ -110,7 +110,7 @@ const GroupEtablissement: React.FC = () => {
                 okText="Confirmer"
                 cancelText="Annuler"
               >
-                <DeleteOutlined />
+                <DeleteOutlined style={{color:"red"}} />
               </Popconfirm>
             </Flex>
           ) : null

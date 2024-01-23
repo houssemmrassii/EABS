@@ -21,27 +21,63 @@ interface Token {
   exp: number;
 }
 
-const Etablissement = lazyLoad(() => import("@/pages/Etablissement/Etablissement"), "default");
+const Client = lazyLoad(
+  () => import("@/pages/ClientPages/Client/Client"),
+  "default"
+);
+
+const Etablissement = lazyLoad(
+  () => import("@/pages/EtablissementPages/Etablissement/Etablissement"),
+  "default"
+);
+
+const User = lazyLoad(
+  () => import("@/pages/UserPages/User/User"),
+  "default"
+);
 
 const GroupEtablissement = lazyLoad(
-  () => import("@/pages/GroupEtablissement/GroupEtablissement"),
+  () =>
+    import("@/pages/EtablissementPages/GroupEtablissement/GroupEtablissement"),
+  "default"
+);
+
+const GroupClient = lazyLoad(
+  () => import("@/pages/ClientPages/GroupeClient/GroupClient"),
   "default"
 );
 
 const ContractEtablissement = lazyLoad(
-  () => import("@/pages/ContratEtablissement/ContractEtablissement"),
+  () =>
+    import(
+      "@/pages/EtablissementPages/ContratEtablissement/ContractEtablissement"
+    ),
   "default"
 );
-const TypeChambre = lazyLoad(() => import("@/pages/TypeChambre/TypeChambre"), "default");
+
+const ContractClient = lazyLoad(
+  () =>
+    import(
+      "@/pages/ClientPages/ContratClient/ContractClient"
+    ),
+  "default"
+);
+const TypeChambre = lazyLoad(
+  () => import("@/pages/EtablissementPages/TypeChambre/TypeChambre"),
+  "default"
+);
 
 const Dashboard = lazyLoad(() => import("@pages/Dashboard"), "default");
 
 const DetailsContractEtablissement = lazyLoad(
-  () => import("@/pages/ContratEtablissement/DetailsContractEtablissement"),
+  () =>
+    import(
+      "@/pages/EtablissementPages/ContratEtablissement/DetailsContractEtablissement"
+    ),
   "default"
 );
 const DetailsEtablissement = lazyLoad(
-  () => import("@/pages/Etablissement/DetailsEtablissement"),
+  () => import("@/pages/EtablissementPages/Etablissement/DetailsEtablissement"),
   "default"
 );
 
@@ -63,6 +99,10 @@ const getChildrenRoutes = () => {
           children.push({
             path: "etablissement",
             element: Etablissement,
+          });
+          children.push({
+            path: "etablissement-details/:id",
+            element: DetailsEtablissement,
           });
         }
         if (
@@ -86,6 +126,10 @@ const getChildrenRoutes = () => {
             path: "contract-etablissement",
             element: ContractEtablissement,
           });
+          children.push({
+            path: "contract-etablissement-details/:id",
+            element: DetailsContractEtablissement,
+          });
         }
       }
     }
@@ -100,12 +144,20 @@ const getChildrenRoutes = () => {
       element: Dashboard,
     },
     {
-      path: "etablissement-details/:id",
-      element: DetailsEtablissement,
+      path: "groupe-client",
+      element: GroupClient,
     },
     {
-      path: "contract-etablissement-details/:id",
-      element: DetailsContractEtablissement,
+      path: "client",
+      element: Client,
+    },
+    {
+      path: "contrat-client",
+      element: ContractClient,
+    },
+    {
+      path: "utilisateurs",
+      element: User,
     },
     ...children,
   ];

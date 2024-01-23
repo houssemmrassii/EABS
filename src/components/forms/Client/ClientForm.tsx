@@ -16,36 +16,26 @@ import {
 
 import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
-import { updateEtablissementService } from "@services/Etablissement";
+import { postClientService } from "@services/Client";
 import {
   getDepartementsByRegion,
   getFractions,
   getRegions,
   getVillesByDepartment,
 } from "@/services/Factory";
-import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
-import {
-  EtablissementDataType,
-  SelectTOptionType,
-  SelectTOptionTypeWithId,
-} from "@/types";
+import { getClientGroupsService } from "@/services/ClientGroup";
+import { SelectTOptionType, SelectTOptionTypeWithId } from "@/types";
 
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
 type Props = {
-  recordData: EtablissementDataType | undefined;
-  setEditing?: React.Dispatch<
-    React.SetStateAction<EtablissementDataType | null>
-  >;
-  refrech?: boolean;
-  setRefrech?: React.Dispatch<React.SetStateAction<boolean>>;
-  external?: boolean;
+  setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
+  refrech: boolean;
 };
 
-const UpdateEtablissementForm = (props: Props) => {
-  const { recordData, setEditing, refrech, setRefrech, external } = props;
-
+const ClientForm = (props: Props) => {
+  const { refrech, setRefrech } = props;
   const [active, setActive] = useState(false);
   const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
   const [fractions, setFractions] = useState<SelectTOptionType[]>();
@@ -57,27 +47,15 @@ const UpdateEtablissementForm = (props: Props) => {
   const resetAndClose = () => {
     form.resetFields();
     setActive(false);
-    if (setEditing) {
-      setEditing(null);
-    }
   };
 
   const onFinish = async (values: any) => {
     try {
-      await updateEtablissementService(recordData?.id as number, values);
-
-      message.success("L'établissements a été modifiée avec succès.");
-      if (!external) {
-        if (setRefrech) {
-          setRefrech(!refrech);
-        }
-        setActive(false);
-        if (setEditing) {
-          setEditing(null);
-        }
-      }
+      await postClientService(values);
+      setRefrech(!refrech);
+      message.success("le client a été ajouté avec succès.");
     } catch (error) {
-      console.error((error as Error)?.message);
+      message.error((error as Error)?.message);
     }
   };
 
@@ -101,7 +79,7 @@ const UpdateEtablissementForm = (props: Props) => {
 
       setDepartments(temp);
     } catch (error) {
-      console.error((error as Error)?.message);
+      message.error((error as Error)?.message);
     }
   };
 
@@ -120,7 +98,7 @@ const UpdateEtablissementForm = (props: Props) => {
 
       setCities(temp);
     } catch (error) {
-      console.error((error as Error)?.message);
+      message.error((error as Error)?.message);
     }
   };
 
@@ -145,7 +123,7 @@ const UpdateEtablissementForm = (props: Props) => {
 
     async function fetchGroupEtab() {
       try {
-        const result = await getEtablissementGroupsService();
+        const result = await getClientGroupsService();
         const groups = result?.groups?.map((element: any) => {
           return {
             label: element?.name,
@@ -155,7 +133,8 @@ const UpdateEtablissementForm = (props: Props) => {
 
         setGroupEtabs(groups);
       } catch (error) {
-        console.error((error as Error)?.message);
+        message.error((error as Error)?.message);
+        // Handle the error if needed
       }
     }
 
@@ -172,7 +151,7 @@ const UpdateEtablissementForm = (props: Props) => {
 
         setFractions(temp);
       } catch (error) {
-        console.error((error as Error)?.message);
+        message.error((error as Error)?.message);
       }
     }
 
@@ -182,21 +161,6 @@ const UpdateEtablissementForm = (props: Props) => {
 
     fetchRegions();
   }, []);
-
-  useEffect(() => {
-    async function setData() {
-      try {
-        form.setFieldsValue({
-          ...recordData,
-          fractionnement: recordData?.id_fractionnement,
-        });
-      } catch (error) {
-        message.error((error as Error)?.message);
-      }
-    }
-
-    setData();
-  }, [recordData]);
 
   return (
     <div>
@@ -214,9 +178,7 @@ const UpdateEtablissementForm = (props: Props) => {
           {
             key: "1",
             label: (
-              <Typography.Text strong>
-                Modifier {recordData?.name}
-              </Typography.Text>
+              <Typography.Text strong>Ajouter un client</Typography.Text>
             ),
             children: (
               <Form
@@ -230,19 +192,19 @@ const UpdateEtablissementForm = (props: Props) => {
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item
-                      label="Établissement:"
+                      label="Client:"
                       name="name"
                       rules={[
                         {
                           required: true,
                           message:
-                            "Veuillez saisir le nom du l'établissement !",
+                            "Veuillez saisir le nom du l'client !",
                         },
                       ]}
                     >
                       <Input
                         prefix={<BuildOutlined />}
-                        placeholder="Nom établissement"
+                        placeholder="Nom client"
                       />
                     </Form.Item>
                   </Col>
@@ -250,7 +212,7 @@ const UpdateEtablissementForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       name="group_id"
-                      label="Group établissement:"
+                      label="Group client:"
                       required
                     >
                       <Select options={groupEtabs} />
@@ -365,7 +327,7 @@ const UpdateEtablissementForm = (props: Props) => {
                   </Col>
 
                   <Divider orientation="center">
-                    Informations d'établissement et de facturation
+                    Informations d'client et de facturation
                   </Divider>
                   <Col span={8}>
                     <Form.Item label="Siret" name="siret">
@@ -407,7 +369,7 @@ const UpdateEtablissementForm = (props: Props) => {
                   </Col>
 
                   <Col span={8}>
-                    <Form.Item name="active" label="État :">
+                    <Form.Item name="active" label="État">
                       <Select
                         defaultValue={true}
                         options={[
@@ -421,7 +383,7 @@ const UpdateEtablissementForm = (props: Props) => {
                           },
                         ]}
                       />
-                    </Form.Item>{" "}
+                    </Form.Item>
                   </Col>
                 </Row>
                 <Divider orientation="center">
@@ -476,7 +438,7 @@ const UpdateEtablissementForm = (props: Props) => {
 
                     <Form.Item>
                       <Button type="primary" htmlType="submit">
-                        Modifier
+                        Ajouter
                       </Button>
                     </Form.Item>
                   </Space>
@@ -492,4 +454,4 @@ const UpdateEtablissementForm = (props: Props) => {
   );
 };
 
-export default UpdateEtablissementForm;
+export default ClientForm;

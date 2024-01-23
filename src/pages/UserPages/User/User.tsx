@@ -1,30 +1,27 @@
 import React, { Key } from "react";
-import { getEtablissementService } from "@services/Etablissement";
+import { getUserService } from "@services/User";
 import { Badge, Popconfirm, Space, Table, message } from "antd";
 import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
-import {
-  deleteEtablissementGroupsService,
-  getEtablissementGroupsService,
-} from "@services/EtablissementGroup";
-import { useEtablissementContext } from "@/context/EtablissementContext";
 
-import EtablissementForm from "@forms/Etablissement/EtablissementForm";
+import { useUserContext } from "@/context/UserContext";
+
+import UserForm from "@forms/User/UserForm";
 
 import type { ColumnsType } from "antd/es/table";
 import { useGlobal } from "@/context/GlobalContext";
-import { EtablissementDataType } from "@/types";
-import UpdateEtablissementForm from "@/components/forms/Etablissement/UpdateEtablissementForm";
+import { UserDataType } from "@/types";
+import UpdateUserForm from "@/components/forms/User/UpdateUserForm";
 
-const Etablissement: React.FC = () => {
+const User: React.FC = () => {
   const { getColumnSearchProps, setSelectedEtabRecord } = useGlobal();
-  const { tableData, setTableData } = useEtablissementContext();
+  const { tableData, setTableData } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState<EtablissementDataType | null>(null);
+  const [editing, setEditing] = useState<UserDataType | null>(null);
   const [refrech, setRefrech] = useState(false);
   const [groupEtabs, setGroupEtabs] = useState<any>([]);
   const Navigate = useNavigate();
 
-  const handleDetailsNavigation = (record: EtablissementDataType) => {
+  const handleDetailsNavigation = (record: UserDataType) => {
     setSelectedEtabRecord(record);
     Navigate(`/dashboard/etablissement-details/${record?.id}`);
   };
@@ -32,7 +29,7 @@ const Etablissement: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getEtablissementService();
+        const result = await getUserService();
 
         setTableData(result?.etablissements);
 
@@ -42,31 +39,12 @@ const Etablissement: React.FC = () => {
       }
     };
 
-    async function fetchGroupEtab() {
-      try {
-        const result = await getEtablissementGroupsService();
-        const groups = result?.groups?.map((element: any) => {
-          return {
-            text: element?.name,
-            value: element?.name,
-          };
-        });
-
-        setGroupEtabs(groups);
-      } catch (error) {
-        message.error((error as Error)?.message);
-      }
-    }
-
-    fetchGroupEtab();
-
     fetchData();
   }, [refrech]);
 
   const handleDelete = async (key: number | undefined) => {
     if (tableData) {
       try {
-        await deleteEtablissementGroupsService(key as number);
         setTimeout(() => {}, 500);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -75,31 +53,20 @@ const Etablissement: React.FC = () => {
     }
   };
 
-  const columns: ColumnsType<EtablissementDataType> = [
+  const columns: ColumnsType<UserDataType> = [
     {
-      title: "Établissement",
+      title: "Utilisateur",
       dataIndex: "name",
       key: "name",
-      ...getColumnSearchProps("name", "Établissement"),
+      ...getColumnSearchProps("name", "Utilisateur"),
     },
     {
-      title: "G. Établissement",
+      title: "G. Utilisateur",
       dataIndex: "group_data.name",
       key: "groupName",
       filters: groupEtabs,
       onFilter: (value, record) => record?.group_data?.name === value,
-      render: (_, record: EtablissementDataType) => (
-        <>{record?.group_data?.name}</>
-      ),
-    },
-    {
-      title: "Fractionnement",
-      dataIndex: "fractionnement_data.name",
-      key: "Fractionnement",
-
-      render: (_, record: EtablissementDataType) => (
-        <>{record?.fractionnement_data?.name}</>
-      ),
+      render: (_, record: UserDataType) => <>{record?.group_data?.name}</>,
     },
     {
       title: "N° Tél",
@@ -112,13 +79,6 @@ const Etablissement: React.FC = () => {
       dataIndex: "email",
       key: "Email",
       ...getColumnSearchProps("email", "Email"),
-    },
-    {
-      title: "Fax",
-      dataIndex: "num_fax",
-      key: "Fax",
-
-      ...getColumnSearchProps("num_fax", "Fax"),
     },
     {
       title: "Statut",
@@ -134,7 +94,7 @@ const Etablissement: React.FC = () => {
           value: false,
         },
       ],
-      onFilter: (value: boolean | Key, record: EtablissementDataType) =>
+      onFilter: (value: boolean | Key, record: UserDataType) =>
         record.active === value,
       render: (_, { active }) => (
         <Badge
@@ -147,27 +107,26 @@ const Etablissement: React.FC = () => {
       title: "Paramètres",
       dataIndex: "Paramètres",
       render: (_, record) => (
-        <Space>
+        <Space size="large">
+          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
           <EditTwoTone onClick={() => setEditing(record)} />
-
           <Popconfirm
             title="Vous êtes sûr de supprimer?"
             onConfirm={() => handleDelete(record?.id)}
             okText="Confirmer"
             cancelText="Annuler"
           >
-            <DeleteOutlined />
+            <DeleteOutlined style={{ color: "red" }} />
           </Popconfirm>
-          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
         </Space>
       ),
     },
   ];
   return (
     <>
-      <EtablissementForm refrech={refrech} setRefrech={setRefrech} />
+      <UserForm refrech={refrech} setRefrech={setRefrech} />
       {editing && (
-        <UpdateEtablissementForm
+        <UpdateUserForm
           recordData={editing}
           setEditing={setEditing}
           setRefrech={setRefrech}
@@ -186,4 +145,4 @@ const Etablissement: React.FC = () => {
   );
 };
 
-export default Etablissement;
+export default User;

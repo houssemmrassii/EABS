@@ -1,40 +1,57 @@
-import React from "react";
-import {
-  Button,
-  Row,
-  Form,
-  Input,
-  Col,
-  Select,
-  Collapse,
-  Divider,
-  message,
-  Typography,
-} from "antd";
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
+import React, { Key } from "react";
 
-import { postEtablissementGroupsService } from "@services/EtablissementGroup";
-import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext";
+import { Button, Row, Form, Input, Col, Select, Collapse, Divider } from "antd";
 
-const GroupEtablissementForm: React.FC = () => {
-  const [active, setActive] = useState(false);
-  const { addToTableData } = useGroupEtablissementContext();
+import { EditOutlined, BuildOutlined } from "@ant-design/icons";
+import { useGroupClientContext } from "@/context/GroupClientContext";
+import { updateClientGroupsService } from "@/services/ClientGroup";
+
+
+interface UpdateEtablissementFormProps {
+  idRecord: Key | undefined;
+  setEditing: React.Dispatch<
+    React.SetStateAction<React.Key | null | undefined>
+  >;
+}
+interface DataType {
+  key: number;
+  name: string;
+  status: boolean;
+}
+const UpdateGroupEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
+  idRecord,
+  setEditing,
+}) => {
+  const [active, setActive] = useState(true);
+  const { updateRecord, getRecord } = useGroupClientContext();
+  const [recordData, setRecordData] = useState<DataType>();
+
+  useEffect(() => {
+    if (idRecord) {
+      let record = getRecord(idRecord);
+      setRecordData(record);
+      form.setFieldsValue({
+        name: record?.name,
+        active: record?.status,
+      });
+    }
+  }, []);
+
   const [form] = Form.useForm();
   const resetAndClose = () => {
     form.resetFields();
     setActive(false);
+    setEditing(null);
   };
   const onFinish = async (values: any) => {
     try {
-      let result = await postEtablissementGroupsService(values);
-      let newObject = {
-        key: result?.id,
-        name: result.name,
-        status: result.active,
-      };
-      message.success("Le groupe d'établissements a été ajouté avec succès.");
+      await updateClientGroupsService(idRecord as number, values);
+      updateRecord(idRecord as Key, {
+        key: idRecord as number,
+        name: values.name,
+        status: values.active,
+      });
       setTimeout(() => {
-        addToTableData(newObject);
         resetAndClose();
       }, 500);
     } catch (error) {
@@ -48,23 +65,15 @@ const GroupEtablissementForm: React.FC = () => {
   return (
     <div>
       <Collapse
-        expandIcon={({ isActive }) => (
-          <CaretLeftFilled
-            style={{ fontSize: "20px" }}
-            rotate={isActive ? -90 : 0}
-          />
-        )}
+        expandIcon={() => <EditOutlined style={{ fontSize: "20px" }} />}
         activeKey={active ? "1" : "0"}
         onChange={callback}
         expandIconPosition={"end"}
+        collapsible="disabled"
         items={[
           {
             key: "1",
-            label: (
-              <Typography.Text strong>
-                Ajouter un groupe établissement
-              </Typography.Text>
-            ),
+            label: `Edition de ${recordData?.name}`,
             children: (
               <Form
                 layout="vertical"
@@ -80,7 +89,7 @@ const GroupEtablissementForm: React.FC = () => {
                 >
                   <Col className="gutter-row" span={6}>
                     <Form.Item
-                      label="Group établissement :"
+                      label="Group client :"
                       name="name"
                       rules={[
                         {
@@ -158,4 +167,4 @@ const GroupEtablissementForm: React.FC = () => {
   );
 };
 
-export default GroupEtablissementForm;
+export default UpdateGroupEtablissementForm;

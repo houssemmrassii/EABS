@@ -1,41 +1,41 @@
-import UpdateContractEtablissementForm from "@/components/forms/ContractEtablissement/UpdateContractEtablissementForm";
+import UpdateContractClientForm from "@/components/forms/ContractClient/UpdateContractClientForm";
 import {
-  deleteContractEtablissement,
-  getContractsEtablissement,
-} from "@/services/ContractEtablissement";
-import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
-import { ContractEtablissementDataType } from "@/types";
+  deleteContractClient,
+  getContractsClient,
+} from "@/services/ContractClient";
+import { getClientGroupsService } from "@/services/ClientGroup";
+import { ContractClientDataType } from "@/types";
 import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
-import ContractEtablissementForm from "@forms/ContractEtablissement/ContractEtablissementForm";
+import ContractClientForm from "@forms/ContractClient/ContractClientForm";
 import { Badge, Popconfirm, Space, Tooltip, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Table } from "antd/lib";
 import dayjs from "dayjs";
 import { useGlobal } from "@/context/GlobalContext";
 
-const ContactEtablissement = () => {
+const ContactClient = () => {
   const { setSelectedContractRecord } = useGlobal();
   const Navigate = useNavigate();
-  const [editing, setEditing] = useState<ContractEtablissementDataType | null>(
+  const [editing, setEditing] = useState<ContractClientDataType | null>(
     null
   );
-  const [data, setData] = useState<ContractEtablissementDataType[]>([]);
+  const [data, setData] = useState<ContractClientDataType[]>([]);
   const [refrech, setRefrech] = useState<boolean>(false);
-  const [groupEtabs, setGroupEtabs] = useState<any>([]);
+  const [groupClients, setGroupClients] = useState<any>([]);
 
-  const columns: ColumnsType<ContractEtablissementDataType> = [
+  const columns: ColumnsType<ContractClientDataType> = [
     {
-      title: "Contract Etab.",
+      title: "Contrat Client.",
       //render: (_, record) => <>N/A</>,
       render: () => <>N/A</>,
     },
     {
-      title: "Etab.",
+      title: "Client.",
       render: (_, record) => <>{record?.etablissement?.name}</>,
     },
     {
-      title: "Group Etab.",
-      filters: groupEtabs,
+      title: "Group Client.",
+      filters: groupClients,
       onFilter: (value, record) =>
         record?.etablissement?.group_data?.name === value,
 
@@ -91,23 +91,23 @@ const ContactEtablissement = () => {
     {
       title: "Paramètres",
       render: (_, record) => (
-        <Space>
-          <EditTwoTone onClick={() => setEditing(record)} />{" "}
+        <Space size="large">
+          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
+          <EditTwoTone onClick={() => setEditing(record)} />
           <Popconfirm
             title="Vous êtes sûr de supprimer?"
             onConfirm={() => handleDelete(record?.id)}
             okText="Confirmer"
             cancelText="Annuler"
           >
-            <DeleteOutlined />
+            <DeleteOutlined style={{color:"red"}} />
           </Popconfirm>
-          <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
         </Space>
       ),
     },
   ];
 
-  const handleDetailsNavigation = (record: ContractEtablissementDataType) => {
+  const handleDetailsNavigation = (record: ContractClientDataType) => {
     setSelectedContractRecord(record);
     Navigate(`/dashboard/contract-etablissement-details/${record?.id}`);
   };
@@ -115,7 +115,7 @@ const ContactEtablissement = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getContractsEtablissement();
+        const data = await getContractsClient();
         setData(data);
       } catch (error) {
         message.error((error as Error)?.message);
@@ -125,9 +125,9 @@ const ContactEtablissement = () => {
   }, [refrech]);
 
   useEffect(() => {
-    async function fetchGroupEtab() {
+    async function fetchGroupClient() {
       try {
-        const result = await getEtablissementGroupsService();
+        const result = await getClientGroupsService();
         const groups = result?.groups?.map((element: any) => {
           return {
             text: element?.name,
@@ -135,18 +135,18 @@ const ContactEtablissement = () => {
           };
         });
 
-        setGroupEtabs(groups);
+        setGroupClients(groups);
       } catch (error) {
         message.error((error as Error)?.message);
       }
     }
 
-    fetchGroupEtab();
+    fetchGroupClient();
   }, []);
 
   const handleDelete = async (id: number) => {
     try {
-      const deletedCon = await deleteContractEtablissement(id);
+      const deletedCon = await deleteContractClient(id);
 
       if (deletedCon) {
         message.success("Le contrat a été supprimer avec succès.");
@@ -159,9 +159,9 @@ const ContactEtablissement = () => {
   };
   return (
     <>
-      <ContractEtablissementForm refrech={refrech} setRefrech={setRefrech} />
+      <ContractClientForm refrech={refrech} setRefrech={setRefrech} />
       {editing && (
-        <UpdateContractEtablissementForm
+        <UpdateContractClientForm
           refrech={refrech}
           setRefrech={setRefrech}
           setEditing={setEditing}
@@ -173,4 +173,4 @@ const ContactEtablissement = () => {
   );
 };
 
-export default ContactEtablissement;
+export default ContactClient;

@@ -15,31 +15,34 @@ import {
   message,
 } from "antd";
 
-import TypeChamListForm from "./TypeChamListForm";
-import { getFractions, getTypeChambre } from "@/services/Factory";
-import { getEtablissementService } from "@/services/Etablissement";
+import { getFractions } from "@/services/Factory";
+import { getClientService } from "@/services/Client";
 import dayjs from "dayjs";
-import { postContractEtablissement } from "@/services/ContractEtablissement";
+import { ContractClientDataType } from "@/types";
+import { updateContractClient } from "@/services/ContractClient";
 
 type Props = {
+  recordData: ContractClientDataType;
+  setEditing: React.Dispatch<
+    React.SetStateAction<ContractClientDataType | null>
+  >;
   refrech: boolean;
   setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const { RangePicker } = DatePicker;
 
-const ContractEtablissementForm = (props: Props) => {
-  const { refrech, setRefrech } = props;
-  const [dateRange, setDateRange] = useState<number | null>(null);
+const UpdateContractClientForm = (props: Props) => {
+  const { recordData, setEditing, refrech, setRefrech } = props;
   const [active, setActive] = useState(false);
-  const [etablissements, setEtablissements] = useState<any>([]);
-  const [rooms, setRooms] = useState<any>([]);
   const [fractions, setFractions] = useState<any>([]);
   const [selectedEtab, setSelectedEtab] = useState<any>(null);
-
+  const [clients, setClients] = useState<any>([]);
+  const [dateRange, setDateRange] = useState<number | null>(null);
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
+    setEditing(null);
     form.resetFields();
     setActive(false);
   };
@@ -51,24 +54,23 @@ const ContractEtablissementForm = (props: Props) => {
   const onFinish = async (values: any) => {
     try {
       const payload = {
-        fractionnement_id: values?.fractionnement,
-        etablissement_id: values?.etablissement,
         start_date: dayjs(values?.period[0]).format("YYYY-MM-DD"),
         end_date: dayjs(values?.period[1]).format("YYYY-MM-DD"),
         active: values?.active,
-        type_chambres: values?.type_chambres?.map((elem: any) => {
+        type_chambres: recordData?.type_chambres?.map((elem: any) => {
           return {
             id_type_chambre: elem?.id,
             prix_achat: elem?.prix_achat,
-            default_pax: elem?.def ? elem?.def : null,
-            num_chambres: elem?.num_chambre,
+            default_pax: elem?.default_pax,
+            num_chambres: elem?.num_chambres,
           };
         }),
       };
 
-      await postContractEtablissement(payload);
+      await updateContractClient(recordData?.id, payload);
 
       setRefrech(!refrech);
+      message.success("Contract établissement modifié avec succès");
       resetAndClose();
     } catch (error) {
       message.error((error as Error)?.message);
@@ -93,41 +95,18 @@ const ContractEtablissementForm = (props: Props) => {
       }
     }
 
-    async function fetchRooms() {
-      try {
-        const data = await getTypeChambre();
-        const temp = data?.map((elem: any) => {
-          return {
-            id: elem?.id,
-            modalite_achat: elem?.modalite_achat,
-            name: elem?.name,
-            prix_achat: null,
-            def: null,
-            def_array: Array.from(
-              new Set([elem?.num_max_occupants, elem?.num_defaut_occupants])
-            ),
-            num_chambre: null,
-          };
-        });
-        setRooms(temp);
-        form.setFieldsValue({ type_chambres: temp });
-      } catch (error) {
-        message.error(error as string);
-      }
-    }
-
     const fetchEtabs = async () => {
       try {
-        const result = await getEtablissementService();
+        const result = await getClientService();
 
-        const temp = result?.etablissements?.map((elem: any) => {
+        const temp = result?.clients?.map((elem: any) => {
           return {
             label: elem?.name,
             value: elem?.id,
           };
         });
 
-        setEtablissements(temp);
+        setClients(temp);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -135,7 +114,12 @@ const ContractEtablissementForm = (props: Props) => {
 
     fetchEtabs();
     fetchFractions();
-    fetchRooms();
+    form.setFieldsValue({
+      fractionnement: recordData?.fractionnement_id,
+      etablissement: recordData?.etablissement_id,
+      period: [dayjs(recordData?.start_date), dayjs(recordData?.end_date)],
+    });
+    setSelectedEtab(recordData?.etablissement_id);
   }, []);
 
   return (
@@ -155,7 +139,7 @@ const ContractEtablissementForm = (props: Props) => {
             key: "1",
             label: (
               <Typography.Text strong>
-                Ajouter un contract d'établissement
+                Modifier le contract d'établissement
               </Typography.Text>
             ),
             children: (
@@ -170,11 +154,12 @@ const ContractEtablissementForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       name="etablissement"
-                      label="Établissement"
+                      label="Client"
                       rules={[{ required: true, message: "Champ requis" }]}
                     >
                       <Select
-                        options={etablissements}
+                        disabled
+                        options={clients}
                         onChange={(e) => setSelectedEtab(e)}
                       />
                     </Form.Item>
@@ -241,7 +226,9 @@ const ContractEtablissementForm = (props: Props) => {
                             paddingTop: "1rem",
                           }}
                         >
-                          <Checkbox value={true}>Intermédiaire</Checkbox>
+                          <Checkbox disabled value={true}>
+                            Intermédiaire
+                          </Checkbox>
                         </Form.Item>
                       </Col>
                     </Row> */}
@@ -253,12 +240,12 @@ const ContractEtablissementForm = (props: Props) => {
                           label="Facture calculée"
                           rules={[{ required: true, message: "Champ requis" }]}
                         >
-                          <Select options={fractions} />
+                          <Select disabled options={fractions} />
                         </Form.Item>
                       </Col>
                     </Row>
-                    <Divider orientation="center">Types chambres</Divider>
-                    <Form.List name="type_chambres">
+                    {/* <Divider orientation="center">Types chambres</Divider>
+                    <Form.List  name="type_chambres" >
                       {(fields, {}) => (
                         <Row gutter={24}>
                           {fields.map(({ key, name, ...restField }) => {
@@ -273,7 +260,7 @@ const ContractEtablissementForm = (props: Props) => {
                           })}
                         </Row>
                       )}
-                    </Form.List>
+                    </Form.List> */}
                   </>
                 )}
                 <Flex justify="center">
@@ -288,7 +275,7 @@ const ContractEtablissementForm = (props: Props) => {
                         disabled={!selectedEtab}
                         htmlType="submit"
                       >
-                        Ajouter
+                        Modifier
                       </Button>
                     </Form.Item>
                   </Space>
@@ -302,4 +289,4 @@ const ContractEtablissementForm = (props: Props) => {
   );
 };
 
-export default ContractEtablissementForm;
+export default UpdateContractClientForm;

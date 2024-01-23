@@ -11,14 +11,14 @@ import {
   message,
   Typography,
 } from "antd";
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
+import {  BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
-import { postEtablissementGroupsService } from "@services/EtablissementGroup";
-import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext";
+import { postClientGroupsService } from "@/services/ClientGroup";
+import { useGroupClientContext } from "@/context/GroupClientContext";
 
 const GroupEtablissementForm: React.FC = () => {
   const [active, setActive] = useState(false);
-  const { addToTableData } = useGroupEtablissementContext();
+  const { addToTableData } = useGroupClientContext();
   const [form] = Form.useForm();
   const resetAndClose = () => {
     form.resetFields();
@@ -26,13 +26,13 @@ const GroupEtablissementForm: React.FC = () => {
   };
   const onFinish = async (values: any) => {
     try {
-      let result = await postEtablissementGroupsService(values);
+      let result = await postClientGroupsService(values);
       let newObject = {
         key: result?.id,
         name: result.name,
         status: result.active,
       };
-      message.success("Le groupe d'établissements a été ajouté avec succès.");
+      message.success("Le groupe client a été ajouté avec succès.");
       setTimeout(() => {
         addToTableData(newObject);
         resetAndClose();
@@ -62,7 +62,7 @@ const GroupEtablissementForm: React.FC = () => {
             key: "1",
             label: (
               <Typography.Text strong>
-                Ajouter un groupe établissement
+                Ajouter un groupe client
               </Typography.Text>
             ),
             children: (
@@ -80,7 +80,7 @@ const GroupEtablissementForm: React.FC = () => {
                 >
                   <Col className="gutter-row" span={6}>
                     <Form.Item
-                      label="Group établissement :"
+                      label="Group client :"
                       name="name"
                       rules={[
                         {

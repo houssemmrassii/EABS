@@ -1,6 +1,6 @@
 import { patchTypeChambre } from "@/services/Factory";
 import { TypeChambreDataType } from "@/types";
-import { PlusOutlined } from "@ant-design/icons";
+import { CaretLeftFilled } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -75,9 +75,9 @@ const UpdateTypeChambreForm = (props: Props) => {
     <div>
       <Collapse
         expandIcon={({ isActive }) => (
-          <PlusOutlined
+          <CaretLeftFilled
             style={{ fontSize: "20px" }}
-            rotate={isActive ? 90 : 0}
+            rotate={isActive ? -90 : 0}
           />
         )}
         activeKey={active ? "1" : "0"}
@@ -98,10 +98,9 @@ const UpdateTypeChambreForm = (props: Props) => {
                 initialValues={{ active: true }}
                 onFinish={onFinish}
                 form={form}
-                size="large"
               >
-                <Row gutter={24}>
-                  <Col span={12}>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                  <Col span={6}>
                     <Form.Item
                       label="Type Chambre"
                       name="name"
@@ -115,7 +114,7 @@ const UpdateTypeChambreForm = (props: Props) => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={6}>
                     <Form.Item
                       label="Type de pension"
                       name="type_pension"
@@ -136,7 +135,7 @@ const UpdateTypeChambreForm = (props: Props) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={6}>
                     <Form.Item
                       label="Modalite d'achat"
                       name="modalite_achat"
@@ -158,7 +157,7 @@ const UpdateTypeChambreForm = (props: Props) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={6}>
                     <Form.Item
                       label="Modalite de vente"
                       name="modalite_vente"

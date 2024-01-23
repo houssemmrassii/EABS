@@ -16,16 +16,15 @@ import {
 
 import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
-import { updateEtablissementService } from "@services/Etablissement";
+import { updateUserService } from "@services/User";
 import {
   getDepartementsByRegion,
   getFractions,
   getRegions,
   getVillesByDepartment,
 } from "@/services/Factory";
-import { getEtablissementGroupsService } from "@/services/EtablissementGroup";
 import {
-  EtablissementDataType,
+  UserDataType,
   SelectTOptionType,
   SelectTOptionTypeWithId,
 } from "@/types";
@@ -34,16 +33,16 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
 type Props = {
-  recordData: EtablissementDataType | undefined;
+  recordData: UserDataType | undefined;
   setEditing?: React.Dispatch<
-    React.SetStateAction<EtablissementDataType | null>
+    React.SetStateAction<UserDataType | null>
   >;
   refrech?: boolean;
   setRefrech?: React.Dispatch<React.SetStateAction<boolean>>;
   external?: boolean;
 };
 
-const UpdateEtablissementForm = (props: Props) => {
+const UpdateUserForm = (props: Props) => {
   const { recordData, setEditing, refrech, setRefrech, external } = props;
 
   const [active, setActive] = useState(false);
@@ -64,9 +63,9 @@ const UpdateEtablissementForm = (props: Props) => {
 
   const onFinish = async (values: any) => {
     try {
-      await updateEtablissementService(recordData?.id as number, values);
+      await updateUserService(recordData?.id as number, values);
 
-      message.success("L'établissements a été modifiée avec succès.");
+      message.success("L'utilisateurs a été modifiée avec succès.");
       if (!external) {
         if (setRefrech) {
           setRefrech(!refrech);
@@ -143,21 +142,7 @@ const UpdateEtablissementForm = (props: Props) => {
       }
     }
 
-    async function fetchGroupEtab() {
-      try {
-        const result = await getEtablissementGroupsService();
-        const groups = result?.groups?.map((element: any) => {
-          return {
-            label: element?.name,
-            value: element?.id,
-          };
-        });
-
-        setGroupEtabs(groups);
-      } catch (error) {
-        console.error((error as Error)?.message);
-      }
-    }
+  
 
     async function fetchFractions() {
       try {
@@ -178,7 +163,6 @@ const UpdateEtablissementForm = (props: Props) => {
 
     fetchFractions();
 
-    fetchGroupEtab();
 
     fetchRegions();
   }, []);
@@ -230,19 +214,19 @@ const UpdateEtablissementForm = (props: Props) => {
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item
-                      label="Établissement:"
+                      label="Utilisateur:"
                       name="name"
                       rules={[
                         {
                           required: true,
                           message:
-                            "Veuillez saisir le nom du l'établissement !",
+                            "Veuillez saisir le nom du l'utilisateur !",
                         },
                       ]}
                     >
                       <Input
                         prefix={<BuildOutlined />}
-                        placeholder="Nom établissement"
+                        placeholder="Nom utilisateur"
                       />
                     </Form.Item>
                   </Col>
@@ -250,7 +234,7 @@ const UpdateEtablissementForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       name="group_id"
-                      label="Group établissement:"
+                      label="Group utilisateur:"
                       required
                     >
                       <Select options={groupEtabs} />
@@ -365,7 +349,7 @@ const UpdateEtablissementForm = (props: Props) => {
                   </Col>
 
                   <Divider orientation="center">
-                    Informations d'établissement et de facturation
+                    Informations d'utilisateur et de facturation
                   </Divider>
                   <Col span={8}>
                     <Form.Item label="Siret" name="siret">
@@ -492,4 +476,4 @@ const UpdateEtablissementForm = (props: Props) => {
   );
 };
 
-export default UpdateEtablissementForm;
+export default UpdateUserForm;
