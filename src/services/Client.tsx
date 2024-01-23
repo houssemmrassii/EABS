@@ -1,11 +1,11 @@
 import { message } from "antd";
 import axios from "../plugins/axiosInterceptor";
 
-export const getClientGroupsService = async () => {
+export const getClientService = async () => {
   try {
-    const token = localStorage.getItem("token") || ""; // Provide a default value if token is null
+    const token = localStorage.getItem("token") || "";
     const response = await axios.get(
-      `${import.meta.env.VITE_APP_BASE_URL}/groups_client`,
+      `${import.meta.env.VITE_APP_BASE_URL}/clients`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -20,11 +20,11 @@ export const getClientGroupsService = async () => {
   }
 };
 
-export const postClientGroupsService = async (payload: any) => {
+export const postClientService = async (payload: any) => {
   try {
-    const token = localStorage.getItem("token") || ""; // Provide a default value if token is null
+    const token = localStorage.getItem("token") || "";
     const response = await axios.post(
-      `${import.meta.env.VITE_APP_BASE_URL}/groups_client`,
+      `${import.meta.env.VITE_APP_BASE_URL}/clients`,
       payload,
       {
         headers: {
@@ -39,11 +39,11 @@ export const postClientGroupsService = async (payload: any) => {
     throw error; // Re-throw the error to let the caller handle it
   }
 };
-export const deleteClientGroupsService = async (id_group: number) => {
+export const deleteClientService = async (id_group: number) => {
   try {
     const token = localStorage.getItem("token") || "";
     const response = await axios.delete(
-      `${import.meta.env.VITE_APP_BASE_URL}/groups_client/${id_group}`,
+      `${import.meta.env.VITE_APP_BASE_URL}/clients/${id_group}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -58,14 +58,14 @@ export const deleteClientGroupsService = async (id_group: number) => {
   }
 };
 
-export const updateClientGroupsService = async (
+export const updateClientService = async (
   id_group: number,
   payload: object
 ) => {
   try {
     const token = localStorage.getItem("token") || "";
     const response = await axios.put(
-      `${import.meta.env.VITE_APP_BASE_URL}/groups_client/${id_group}`,
+      `${import.meta.env.VITE_APP_BASE_URL}/clients/${id_group}`,
       payload,
       {
         headers: {

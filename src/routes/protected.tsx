@@ -21,38 +21,63 @@ interface Token {
   exp: number;
 }
 
+const Client = lazyLoad(
+  () => import("@/pages/ClientPages/Client/Client"),
+  "default"
+);
+
 const Etablissement = lazyLoad(
-  () => import("@/pages/Etablissement/Etablissement"),
+  () => import("@/pages/EtablissementPages/Etablissement/Etablissement"),
+  "default"
+);
+
+const User = lazyLoad(
+  () => import("@/pages/UserPages/User/User"),
   "default"
 );
 
 const GroupEtablissement = lazyLoad(
-  () => import("@/pages/GroupEtablissement/GroupEtablissement"),
+  () =>
+    import("@/pages/EtablissementPages/GroupEtablissement/GroupEtablissement"),
   "default"
 );
 
 const GroupClient = lazyLoad(
-  () => import("@/pages/GroupeClient/GroupClient"),
+  () => import("@/pages/ClientPages/GroupeClient/GroupClient"),
   "default"
 );
 
 const ContractEtablissement = lazyLoad(
-  () => import("@/pages/ContratEtablissement/ContractEtablissement"),
+  () =>
+    import(
+      "@/pages/EtablissementPages/ContratEtablissement/ContractEtablissement"
+    ),
+  "default"
+);
+
+const ContractClient = lazyLoad(
+  () =>
+    import(
+      "@/pages/ClientPages/ContratClient/ContractClient"
+    ),
   "default"
 );
 const TypeChambre = lazyLoad(
-  () => import("@/pages/TypeChambre/TypeChambre"),
+  () => import("@/pages/EtablissementPages/TypeChambre/TypeChambre"),
   "default"
 );
 
 const Dashboard = lazyLoad(() => import("@pages/Dashboard"), "default");
 
 const DetailsContractEtablissement = lazyLoad(
-  () => import("@/pages/ContratEtablissement/DetailsContractEtablissement"),
+  () =>
+    import(
+      "@/pages/EtablissementPages/ContratEtablissement/DetailsContractEtablissement"
+    ),
   "default"
 );
 const DetailsEtablissement = lazyLoad(
-  () => import("@/pages/Etablissement/DetailsEtablissement"),
+  () => import("@/pages/EtablissementPages/Etablissement/DetailsEtablissement"),
   "default"
 );
 
@@ -119,12 +144,20 @@ const getChildrenRoutes = () => {
       element: Dashboard,
     },
     {
-      path: "groupe-client-details/:id",
-      element: DetailsContractEtablissement,
-    },
-    {
       path: "groupe-client",
       element: GroupClient,
+    },
+    {
+      path: "client",
+      element: Client,
+    },
+    {
+      path: "contrat-client",
+      element: ContractClient,
+    },
+    {
+      path: "utilisateurs",
+      element: User,
     },
     ...children,
   ];

@@ -55,6 +55,7 @@ const Root: React.FC = () => {
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
+          width={220}
         >
           <Menu theme="dark" mode="inline" items={items} />
         </Sider>
@@ -121,7 +122,7 @@ const Root: React.FC = () => {
             style={{
               margin: "26px 16px 0",
               overflow: "initial",
-              marginLeft: !collapsed ? 220 : 100,
+              marginLeft: !collapsed ? 250 : 100,
               transition: "all 0.1s ease-in-out",
               minHeight: "100vh",
             }}

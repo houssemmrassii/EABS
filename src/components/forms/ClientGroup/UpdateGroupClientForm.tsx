@@ -3,9 +3,9 @@ import React, { Key } from "react";
 import { Button, Row, Form, Input, Col, Select, Collapse, Divider } from "antd";
 
 import { EditOutlined, BuildOutlined } from "@ant-design/icons";
+import { useGroupClientContext } from "@/context/GroupClientContext";
+import { updateClientGroupsService } from "@/services/ClientGroup";
 
-import { updateEtablissementGroupsService } from "@services/EtablissementGroup";
-import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext";
 
 interface UpdateEtablissementFormProps {
   idRecord: Key | undefined;
@@ -23,7 +23,7 @@ const UpdateGroupEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
   setEditing,
 }) => {
   const [active, setActive] = useState(true);
-  const { updateRecord, getRecord } = useGroupEtablissementContext();
+  const { updateRecord, getRecord } = useGroupClientContext();
   const [recordData, setRecordData] = useState<DataType>();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const UpdateGroupEtablissementForm: React.FC<UpdateEtablissementFormProps> = ({
   };
   const onFinish = async (values: any) => {
     try {
-      await updateEtablissementGroupsService(idRecord as number, values);
+      await updateClientGroupsService(idRecord as number, values);
       updateRecord(idRecord as Key, {
         key: idRecord as number,
         name: values.name,
