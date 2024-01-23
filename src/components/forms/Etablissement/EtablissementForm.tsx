@@ -187,7 +187,6 @@ const EtablissementForm = (props: Props) => {
                 className="login-form"
                 initialValues={{ active: true }}
                 onFinish={onFinish}
-                size="large"
                 form={form}
               >
                 <Row gutter={24}>

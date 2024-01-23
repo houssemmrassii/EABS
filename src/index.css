@@ -35,3 +35,7 @@ input::placeholder {
 .ant-collapse-header-text {
   color: black;
 }
+
+.react-international-phone-input{
+  width: 100%;
+}

@@ -75,46 +75,42 @@ const TypeChambreForm = (props: Props) => {
                 onFinish={onFinish}
                 form={form}
               >
-                <Row gutter={10}>
-                  <Row gutter={10}>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Type Chambre"
-                        name="name"
-                        rules={[
-                          {
-                            required: true,
-                            message:
-                              "Veuillez sélectionner le type de chambre !",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Type de pension"
-                        name="type_pension"
-                        rules={[
-                          {
-                            required: true,
-                            message:
-                              "Veuillez sélectionner le type de pension !",
-                          },
-                        ]}
-                      >
-                        <Select>
-                          <Select.Option value="Demi-pension">
-                            Demi-pension
-                          </Select.Option>
-                          <Select.Option value="Pension complète">
-                            Pension complète
-                          </Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                <Row gutter={24}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Type Chambre"
+                      name="name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez sélectionner le type de chambre !",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Type de pension"
+                      name="type_pension"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez sélectionner le type de pension !",
+                        },
+                      ]}
+                    >
+                      <Select>
+                        <Select.Option value="Demi-pension">
+                          Demi-pension
+                        </Select.Option>
+                        <Select.Option value="Pension complète">
+                          Pension complète
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
                   <Col span={12}>
                     <Form.Item
                       label="Modalite d'achat"

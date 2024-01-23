@@ -164,7 +164,6 @@ const ContractClientForm = (props: Props) => {
                 name="contract-etab"
                 initialValues={{ active: true }}
                 onFinish={onFinish}
-                size="large"
                 form={form}
               >
                 <Row gutter={24}>

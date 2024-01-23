@@ -14,7 +14,11 @@ import {
   Space,
 } from "antd";
 
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  BuildOutlined,
+  CaretLeftFilled,
+} from "@ant-design/icons";
 
 import { postUserService } from "@services/User";
 import {
@@ -120,8 +124,6 @@ const UserForm = (props: Props) => {
       }
     }
 
-   
-
     async function fetchFractions() {
       try {
         const result = await getFractions();
@@ -169,19 +171,50 @@ const UserForm = (props: Props) => {
                 className="login-form"
                 initialValues={{ active: true }}
                 onFinish={onFinish}
-                size="large"
                 form={form}
               >
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item
-                      label="Utilisateur:"
+                      name="gender"
+                      label="Civilité"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez selectionner civilité !",
+                        },
+                      ]}
+                    >
+                      <Select
+                        options={[
+                          {
+                            label: "N/A",
+                            value: "N/A",
+                          },
+                          {
+                            label: "Monsieur",
+                            value: "Monsieur",
+                          },
+                          {
+                            label: "Madame",
+                            value: "Madame",
+                          },
+                          {
+                            label: "Mademoiselle",
+                            value: "Mademoiselle",
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Nom et prénom utilisateur:"
                       name="name"
                       rules={[
                         {
                           required: true,
-                          message:
-                            "Veuillez saisir le nom du l'utilisateur !",
+                          message: "Veuillez saisir le nom et prénom du l'utilisateur !",
                         },
                       ]}
                     >
@@ -203,65 +236,6 @@ const UserForm = (props: Props) => {
                   </Col>
 
                   <Col span={8}>
-                    <Form.Item name="region" label="Régions" required>
-                      <Select options={regions} onChange={handleChangeRegion} />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="departments" label="Départements" required>
-                      <Select
-                        onChange={handleChangeDepartment}
-                        options={departments}
-                        disabled={departments?.length === 0}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="ville" label="Ville" required>
-                      <Select
-                        options={cities}
-                        disabled={cities?.length === 0}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Code Postal:"
-                      name="code_postal"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez saisir le code postal !",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Code Postal"
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Adresse:"
-                      name="adress"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez saisir l'adress' !",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Divider orientation="center">Contacts</Divider>
-
-                  <Col span={8}>
                     <Form.Item
                       label="E-mail"
                       name="email"
@@ -275,15 +249,21 @@ const UserForm = (props: Props) => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
-                    <Form.Item label="Fax" name="num_fax">
-                      <PhoneInput
-                        style={{ width: "100%" }}
-                        defaultCountry="fr"
-                      />
+                  <Col span={8}>
+                    <Form.Item
+                      label="Mot de passe :"
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir ce champ !",
+                        },
+                      ]}
+                    >
+                      <Input type="password" />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
+                  <Col span={8}>
                     <Form.Item
                       label="Num. de tél."
                       name="num_telephone"
@@ -300,57 +280,6 @@ const UserForm = (props: Props) => {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
-                    <Form.Item label="Portable" name="num_portable">
-                      <PhoneInput
-                        style={{ width: "100%" }}
-                        defaultCountry="fr"
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Divider orientation="center">
-                    Informations d'utilisateur et de facturation
-                  </Divider>
-                  <Col span={8}>
-                    <Form.Item label="Siret" name="siret">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Immatriculation" name="immatriculation">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code NAF" name="code_naf">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label="TVA intra-communautaire"
-                      name="tva_instra_communautaire"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Facture calculée"
-                      name="fractionnement"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez selectionner Facture calculée !",
-                        },
-                      ]}
-                    >
-                      <Select options={fractions} />
-                    </Form.Item>
-                  </Col>
-
                   <Col span={8}>
                     <Form.Item name="active" label="État">
                       <Select
@@ -366,49 +295,6 @@ const UserForm = (props: Props) => {
                           },
                         ]}
                       />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Divider orientation="center">
-                  Coordonnées bancaires (facultatif)
-                </Divider>
-                <Row gutter={24}>
-                  <Col span={8}>
-                    <Form.Item label="Banque" name="banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label="Adresse de la banque"
-                      name="adresse_banque"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code Banque" name="code_banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code Guichet" name="code_guichet">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Compte" name="compte_banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code IBAN" name="iban">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code BIC" name="bic">
-                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>

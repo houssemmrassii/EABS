@@ -39,8 +39,6 @@ const User: React.FC = () => {
       }
     };
 
-    
-
     fetchData();
   }, [refrech]);
 
@@ -68,18 +66,7 @@ const User: React.FC = () => {
       key: "groupName",
       filters: groupEtabs,
       onFilter: (value, record) => record?.group_data?.name === value,
-      render: (_, record: UserDataType) => (
-        <>{record?.group_data?.name}</>
-      ),
-    },
-    {
-      title: "Fractionnement",
-      dataIndex: "fractionnement_data.name",
-      key: "Fractionnement",
-
-      render: (_, record: UserDataType) => (
-        <>{record?.fractionnement_data?.name}</>
-      ),
+      render: (_, record: UserDataType) => <>{record?.group_data?.name}</>,
     },
     {
       title: "N° Tél",
@@ -92,13 +79,6 @@ const User: React.FC = () => {
       dataIndex: "email",
       key: "Email",
       ...getColumnSearchProps("email", "Email"),
-    },
-    {
-      title: "Fax",
-      dataIndex: "num_fax",
-      key: "Fax",
-
-      ...getColumnSearchProps("num_fax", "Fax"),
     },
     {
       title: "Statut",
@@ -127,7 +107,7 @@ const User: React.FC = () => {
       title: "Paramètres",
       dataIndex: "Paramètres",
       render: (_, record) => (
-        <Space size="large" >
+        <Space size="large">
           <EyeOutlined onClick={() => handleDetailsNavigation(record)} />
           <EditTwoTone onClick={() => setEditing(record)} />
           <Popconfirm
@@ -136,7 +116,7 @@ const User: React.FC = () => {
             okText="Confirmer"
             cancelText="Annuler"
           >
-            <DeleteOutlined style={{color:"red"}} />
+            <DeleteOutlined style={{ color: "red" }} />
           </Popconfirm>
         </Space>
       ),
