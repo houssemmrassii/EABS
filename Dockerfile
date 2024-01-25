@@ -32,7 +32,7 @@ COPY ./default.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Copy the static assets from the 'builder' stage to the /usr/share/nginx/html directory
-COPY --from=builder /app/dist .
+COPY --from=builder /app/build .
 
 # Set the entry point command for the container to start Nginx in the foreground
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

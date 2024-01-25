@@ -21,6 +21,17 @@ export default defineConfig({
       "@components": resolve(__dirname, "src/components/elements"),
     }
   },
+  build: {
+    outDir: 'build',
+  },
+  server: {
+    watch: {
+      usePolling: true,
+    },
+    host: true, 
+    strictPort: true,
+    port: 5173,
+  },
   plugins: [react(), AutoImport({
     imports: ['react', 'react-router-dom', 'ahooks'],
     dts: './src/auto-imports.d.ts',
