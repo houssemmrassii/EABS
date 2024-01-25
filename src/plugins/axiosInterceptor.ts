@@ -41,7 +41,11 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError<ApiResponse>) => {
     if (error.response) {
       const { status } = error?.response;
-      if (status === 500) {
+      if (status === 400) {
+        const errorMessage =
+          error?.response?.data?.message || "Veuillez vérifier vos informations et essayer encore";
+          displayNotification(errorMessage, "bottomLeft", 3);
+      } else if (status === 500) {
         // Handle 500 error
         // Example: show an error message to the user
         const errorMessage =

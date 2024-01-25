@@ -26,8 +26,7 @@ const ContactEtablissement = () => {
   const columns: ColumnsType<ContractEtablissementDataType> = [
     {
       title: "Contract Etab.",
-      //render: (_, record) => <>N/A</>,
-      render: () => <>N/A</>,
+      render: (_, record) => <>Contrat {record?.etablissement?.name}</>,
     },
     {
       title: "Etab.",
@@ -118,7 +117,7 @@ const ContactEtablissement = () => {
         const data = await getContractsEtablissement();
         setData(data);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //
       }
     }
     fetchData();
@@ -137,7 +136,7 @@ const ContactEtablissement = () => {
 
         setGroupEtabs(groups);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //
       }
     }
 
@@ -154,7 +153,7 @@ const ContactEtablissement = () => {
         setData(temp);
       }
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
   return (

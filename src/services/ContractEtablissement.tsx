@@ -1,4 +1,5 @@
 import axiosInstance from "@/plugins/axiosInterceptor";
+import { message } from "antd";
 
 export const postContractEtablissement = async (payload: any) => {
   try {
@@ -6,10 +7,10 @@ export const postContractEtablissement = async (payload: any) => {
       "/contrat_etablissement",
       payload
     );
-
+    data?.message && message.success(data?.message)
     return data;
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message);
+    message.warning(error?.response?.data?.message)
   }
 };
 

@@ -14,20 +14,10 @@ import {
   Space,
 } from "antd";
 
-import {
-  PlusOutlined,
-  BuildOutlined,
-  CaretLeftFilled,
-} from "@ant-design/icons";
+import { BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
-import { postUserService } from "@services/User";
-import {
-  getDepartementsByRegion,
-  getFractions,
-  getRegions,
-  getVillesByDepartment,
-} from "@/services/Factory";
-import { SelectTOptionType, SelectTOptionTypeWithId } from "@/types";
+import { getUsersRolesService, postUserService } from "@services/User";
+import { SelectTOptionType } from "@/types";
 
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
@@ -35,16 +25,12 @@ import "react-international-phone/style.css";
 type Props = {
   setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
   refrech: boolean;
+  rolesUsers: []
 };
 
 const UserForm = (props: Props) => {
-  const { refrech, setRefrech } = props;
+  const { refrech, setRefrech,rolesUsers } = props;
   const [active, setActive] = useState(false);
-  const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
-  const [fractions, setFractions] = useState<SelectTOptionType[]>();
-  const [cities, setCities] = useState<SelectTOptionTypeWithId[]>([]);
-  const [regions, setRegions] = useState<SelectTOptionTypeWithId[]>([]);
-  const [departments, setDepartments] = useState<SelectTOptionTypeWithId[]>([]);
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
@@ -57,8 +43,9 @@ const UserForm = (props: Props) => {
       await postUserService(values);
       setRefrech(!refrech);
       message.success("L'utilisateurs a été ajouté avec succès.");
+      callback()
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -66,85 +53,7 @@ const UserForm = (props: Props) => {
     setActive(!active);
   };
 
-  const handleChangeRegion = async (value: any) => {
-    const id = regions?.find((elem: any) => elem?.value === value)?.id;
-    form.setFieldValue("departments", null);
-    form.setFieldValue("ville", null);
-    try {
-      const data = await getDepartementsByRegion(id as number);
-      const temp = data?.map((item: any) => {
-        return {
-          label: item?.name,
-          value: item?.name,
-          id: item?.id,
-        };
-      });
-
-      setDepartments(temp);
-    } catch (error) {
-      message.error((error as Error)?.message);
-    }
-  };
-
-  const handleChangeDepartment = async (value: any) => {
-    const id = departments?.find((elem: any) => elem?.value === value)?.id;
-    form.setFieldValue("ville", null);
-    try {
-      const data = await getVillesByDepartment(id as number);
-      const temp = data?.map((item: any) => {
-        return {
-          label: item?.name,
-          value: item?.name,
-          id: item?.id,
-        };
-      });
-
-      setCities(temp);
-    } catch (error) {
-      message.error((error as Error)?.message);
-    }
-  };
-
-  useEffect(() => {
-    async function fetchRegions() {
-      try {
-        const data = await getRegions();
-
-        const temp = data?.map((item: any) => {
-          return {
-            label: item?.name,
-            value: item?.name,
-            id: item?.id,
-          };
-        });
-
-        setRegions(temp);
-      } catch (error) {
-        return message.error((error as Error)?.message);
-      }
-    }
-
-    async function fetchFractions() {
-      try {
-        const result = await getFractions();
-
-        const temp = result?.map((elem: any) => {
-          return {
-            label: elem?.name,
-            value: elem?.id,
-          };
-        });
-
-        setFractions(temp);
-      } catch (error) {
-        message.error((error as Error)?.message);
-      }
-    }
-
-    fetchFractions();
-
-    fetchRegions();
-  }, []);
+  
 
   return (
     <div>
@@ -210,11 +119,12 @@ const UserForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       label="Nom et prénom utilisateur:"
-                      name="name"
+                      name="username"
                       rules={[
                         {
                           required: true,
-                          message: "Veuillez saisir le nom et prénom du l'utilisateur !",
+                          message:
+                            "Veuillez saisir le nom et prénom du l'utilisateur !",
                         },
                       ]}
                     >
@@ -227,11 +137,11 @@ const UserForm = (props: Props) => {
 
                   <Col span={8}>
                     <Form.Item
-                      name="group_id"
+                      name="role_id"
                       label="Group utilisateur:"
                       required
                     >
-                      <Select options={groupEtabs} />
+                      <Select options={rolesUsers} />
                     </Form.Item>
                   </Col>
 
@@ -266,7 +176,7 @@ const UserForm = (props: Props) => {
                   <Col span={8}>
                     <Form.Item
                       label="Num. de tél."
-                      name="num_telephone"
+                      name="tel"
                       rules={[
                         {
                           required: true,

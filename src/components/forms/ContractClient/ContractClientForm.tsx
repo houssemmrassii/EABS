@@ -71,7 +71,7 @@ const ContractClientForm = (props: Props) => {
       setRefrech(!refrech);
       resetAndClose();
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -89,7 +89,7 @@ const ContractClientForm = (props: Props) => {
 
         setFractions(temp);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //
       }
     }
 

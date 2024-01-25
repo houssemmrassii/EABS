@@ -13,10 +13,13 @@ import {
   Flex,
   Space,
 } from "antd";
+import {
+  PlusOutlined,
+  BuildOutlined,
+  CaretLeftFilled,
+} from "@ant-design/icons";
 
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
-
-import { updateUserService } from "@services/User";
+import { getUsersRolesService, updateUserService } from "@services/User";
 import {
   getDepartementsByRegion,
   getFractions,
@@ -34,23 +37,18 @@ import "react-international-phone/style.css";
 
 type Props = {
   recordData: UserDataType | undefined;
-  setEditing?: React.Dispatch<
-    React.SetStateAction<UserDataType | null>
-  >;
+  setEditing?: React.Dispatch<React.SetStateAction<UserDataType | null>>;
   refrech?: boolean;
   setRefrech?: React.Dispatch<React.SetStateAction<boolean>>;
   external?: boolean;
+  rolesUsers: [];
 };
 
 const UpdateUserForm = (props: Props) => {
-  const { recordData, setEditing, refrech, setRefrech, external } = props;
+  const { recordData, setEditing, refrech, setRefrech, external, rolesUsers } =
+    props;
 
   const [active, setActive] = useState(false);
-  const [groupEtabs, setGroupEtabs] = useState<SelectTOptionType[]>();
-  const [fractions, setFractions] = useState<SelectTOptionType[]>();
-  const [cities, setCities] = useState<SelectTOptionTypeWithId[]>([]);
-  const [regions, setRegions] = useState<SelectTOptionTypeWithId[]>([]);
-  const [departments, setDepartments] = useState<SelectTOptionTypeWithId[]>([]);
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
@@ -64,8 +62,6 @@ const UpdateUserForm = (props: Props) => {
   const onFinish = async (values: any) => {
     try {
       await updateUserService(recordData?.id as number, values);
-
-      message.success("L'utilisateurs a été modifiée avec succès.");
       if (!external) {
         if (setRefrech) {
           setRefrech(!refrech);
@@ -83,107 +79,24 @@ const UpdateUserForm = (props: Props) => {
   const callback = () => {
     setActive(!active);
   };
-
-  const handleChangeRegion = async (value: any) => {
-    const id = regions?.find((elem: any) => elem?.value === value)?.id;
-    form.setFieldValue("departments", null);
-    form.setFieldValue("ville", null);
-    try {
-      const data = await getDepartementsByRegion(id as number);
-      const temp = data?.map((item: any) => {
-        return {
-          label: item?.name,
-          value: item?.name,
-          id: item?.id,
-        };
-      });
-
-      setDepartments(temp);
-    } catch (error) {
-      console.error((error as Error)?.message);
-    }
-  };
-
-  const handleChangeDepartment = async (value: any) => {
-    const id = departments?.find((elem: any) => elem?.value === value)?.id;
-    form.setFieldValue("ville", null);
-    try {
-      const data = await getVillesByDepartment(id as number);
-      const temp = data?.map((item: any) => {
-        return {
-          label: item?.name,
-          value: item?.name,
-          id: item?.id,
-        };
-      });
-
-      setCities(temp);
-    } catch (error) {
-      console.error((error as Error)?.message);
-    }
-  };
-
-  useEffect(() => {
-    async function fetchRegions() {
-      try {
-        const data = await getRegions();
-
-        const temp = data?.map((item: any) => {
-          return {
-            label: item?.name,
-            value: item?.name,
-            id: item?.id,
-          };
-        });
-
-        setRegions(temp);
-      } catch (error) {
-        return message.error((error as Error)?.message);
-      }
-    }
-
-  
-
-    async function fetchFractions() {
-      try {
-        const result = await getFractions();
-
-        const temp = result?.map((elem: any) => {
-          return {
-            label: elem?.name,
-            value: elem?.id,
-          };
-        });
-
-        setFractions(temp);
-      } catch (error) {
-        console.error((error as Error)?.message);
-      }
-    }
-
-    fetchFractions();
-
-
-    fetchRegions();
-  }, []);
-
   useEffect(() => {
     async function setData() {
       try {
         form.setFieldsValue({
           ...recordData,
-          fractionnement: recordData?.id_fractionnement,
         });
       } catch (error) {
-        message.error((error as Error)?.message);
+        //
       }
     }
-
+    setTimeout(() => {
+      callback()
+    }, 100);
     setData();
   }, [recordData]);
 
   return (
-    <div>
+    <div className="fade-in">
       <Collapse
         expandIcon={({ isActive }) => (
           <CaretLeftFilled
@@ -199,7 +112,7 @@ const UpdateUserForm = (props: Props) => {
             key: "1",
             label: (
               <Typography.Text strong>
-                Modifier {recordData?.name}
+                Modifier {recordData?.username}
               </Typography.Text>
             ),
             children: (
@@ -214,13 +127,46 @@ const UpdateUserForm = (props: Props) => {
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item
-                      label="Utilisateur:"
-                      name="name"
+                      name="gender"
+                      label="Civilité"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez selectionner civilité !",
+                        },
+                      ]}
+                    >
+                      <Select
+                        options={[
+                          {
+                            label: "N/A",
+                            value: "N/A",
+                          },
+                          {
+                            label: "Monsieur",
+                            value: "Monsieur",
+                          },
+                          {
+                            label: "Madame",
+                            value: "Madame",
+                          },
+                          {
+                            label: "Mademoiselle",
+                            value: "Mademoiselle",
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Nom et prénom utilisateur:"
+                      name="username"
                       rules={[
                         {
                           required: true,
                           message:
-                            "Veuillez saisir le nom du l'utilisateur !",
+                            "Veuillez saisir le nom et prénom du l'utilisateur !",
                         },
                       ]}
                     >
@@ -233,72 +179,19 @@ const UpdateUserForm = (props: Props) => {
 
                   <Col span={8}>
                     <Form.Item
-                      name="group_id"
+                      name="role_id"
                       label="Group utilisateur:"
-                      required
-                    >
-                      <Select options={groupEtabs} />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="region" label="Régions" required>
-                      <Select options={regions} onChange={handleChangeRegion} />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="departments" label="Départements" required>
-                      <Select
-                        onChange={handleChangeDepartment}
-                        options={departments}
-                        disabled={departments?.length === 0}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="ville" label="Ville" required>
-                      <Select
-                        options={cities}
-                        disabled={cities?.length === 0}
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Code Postal:"
-                      name="code_postal"
                       rules={[
                         {
                           required: true,
-                          message: "Veuillez saisir le code postal !",
+                          message:
+                            "Veuillez choisir le role du l'utilisateur !",
                         },
                       ]}
                     >
-                      <Input
-                        placeholder="Code Postal"
-                        style={{ width: "100%" }}
-                      />
+                      <Select options={rolesUsers} />
                     </Form.Item>
                   </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Adresse:"
-                      name="adress"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez saisir l'adress' !",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Divider orientation="center">Contacts</Divider>
 
                   <Col span={8}>
                     <Form.Item
@@ -314,18 +207,24 @@ const UpdateUserForm = (props: Props) => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
-                    <Form.Item label="Fax" name="num_fax">
-                      <PhoneInput
-                        style={{ width: "100%" }}
-                        defaultCountry="fr"
-                      />
+                  <Col span={8}>
+                    <Form.Item
+                      label="Mot de passe :"
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir ce champ !",
+                        },
+                      ]}
+                    >
+                      <Input type="password" />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
+                  <Col span={8}>
                     <Form.Item
                       label="Num. de tél."
-                      name="num_telephone"
+                      name="tel"
                       rules={[
                         {
                           required: true,
@@ -339,59 +238,8 @@ const UpdateUserForm = (props: Props) => {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
-                    <Form.Item label="Portable" name="num_portable">
-                      <PhoneInput
-                        style={{ width: "100%" }}
-                        defaultCountry="fr"
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Divider orientation="center">
-                    Informations d'utilisateur et de facturation
-                  </Divider>
                   <Col span={8}>
-                    <Form.Item label="Siret" name="siret">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Immatriculation" name="immatriculation">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code NAF" name="code_naf">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label="TVA intra-communautaire"
-                      name="tva_instra_communautaire"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item
-                      label="Facture calculée"
-                      name="fractionnement"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Veuillez selectionner Facture calculée !",
-                        },
-                      ]}
-                    >
-                      <Select options={fractions} />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={8}>
-                    <Form.Item name="active" label="État :">
+                    <Form.Item name="active" label="État">
                       <Select
                         defaultValue={true}
                         options={[
@@ -405,49 +253,6 @@ const UpdateUserForm = (props: Props) => {
                           },
                         ]}
                       />
-                    </Form.Item>{" "}
-                  </Col>
-                </Row>
-                <Divider orientation="center">
-                  Coordonnées bancaires (facultatif)
-                </Divider>
-                <Row gutter={24}>
-                  <Col span={8}>
-                    <Form.Item label="Banque" name="banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label="Adresse de la banque"
-                      name="adresse_banque"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code Banque" name="code_banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code Guichet" name="code_guichet">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Compte" name="compte_banque">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code IBAN" name="iban">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Code BIC" name="bic">
-                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>

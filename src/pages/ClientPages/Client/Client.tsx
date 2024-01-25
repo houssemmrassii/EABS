@@ -54,7 +54,7 @@ const Client: React.FC = () => {
 
         setGroupEtabs(groups);
       } catch (error) {
-        message.error((error as Error)?.message);
+        //
       }
     }
 

@@ -139,7 +139,7 @@ const UpdateEtablissementForm = (props: Props) => {
 
         setRegions(temp);
       } catch (error) {
-        return message.error((error as Error)?.message);
+        return 
       }
     }
 
@@ -191,7 +191,7 @@ const UpdateEtablissementForm = (props: Props) => {
           fractionnement: recordData?.id_fractionnement,
         });
       } catch (error) {
-        message.error((error as Error)?.message);
+        //
       }
     }
 
