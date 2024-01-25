@@ -59,11 +59,11 @@ export const postUserService = async (payload: any) => {
     throw error; // Re-throw the error to let the caller handle it
   }
 };
-export const deleteUserService = async (id_group: number) => {
+export const deleteUserService = async (id_user: number) => {
   try {
     const token = localStorage.getItem("token") || "";
     const response = await axios.delete(
-      `${import.meta.env.VITE_APP_BASE_URL}/users/${id_group}`,
+      `${import.meta.env.VITE_APP_BASE_URL}/users/${id_user}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -79,13 +79,13 @@ export const deleteUserService = async (id_group: number) => {
 };
 
 export const updateUserService = async (
-  id_group: number,
+  id_user: number,
   payload: object
 ) => {
   try {
     const token = localStorage.getItem("token") || "";
     const response = await axios.put(
-      `${import.meta.env.VITE_APP_BASE_URL}/users/${id_group}`,
+      `${import.meta.env.VITE_APP_BASE_URL}/users/${id_user}`,
       payload,
       {
         headers: {

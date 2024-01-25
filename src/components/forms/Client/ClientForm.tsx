@@ -55,7 +55,7 @@ const ClientForm = (props: Props) => {
       setRefrech(!refrech);
       message.success("le client a été ajouté avec succès.");
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -79,7 +79,7 @@ const ClientForm = (props: Props) => {
 
       setDepartments(temp);
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -98,7 +98,7 @@ const ClientForm = (props: Props) => {
 
       setCities(temp);
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -117,7 +117,7 @@ const ClientForm = (props: Props) => {
 
         setRegions(temp);
       } catch (error) {
-        return message.error((error as Error)?.message);
+        return 
       }
     }
 
@@ -133,7 +133,7 @@ const ClientForm = (props: Props) => {
 
         setGroupEtabs(groups);
       } catch (error) {
-        message.error((error as Error)?.message);
+        
         // Handle the error if needed
       }
     }
@@ -151,7 +151,7 @@ const ClientForm = (props: Props) => {
 
         setFractions(temp);
       } catch (error) {
-        //message.error((error as Error)?.message);
+        //
       }
     }
 

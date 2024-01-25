@@ -25,12 +25,12 @@ import "react-international-phone/style.css";
 type Props = {
   setRefrech: React.Dispatch<React.SetStateAction<boolean>>;
   refrech: boolean;
+  rolesUsers: []
 };
 
 const UserForm = (props: Props) => {
-  const { refrech, setRefrech } = props;
+  const { refrech, setRefrech,rolesUsers } = props;
   const [active, setActive] = useState(false);
-  const [groupClients, setGroupClients] = useState<SelectTOptionType[]>();
   const [form] = Form.useForm();
 
   const resetAndClose = () => {
@@ -45,7 +45,7 @@ const UserForm = (props: Props) => {
       message.success("L'utilisateurs a été ajouté avec succès.");
       callback()
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -53,25 +53,7 @@ const UserForm = (props: Props) => {
     setActive(!active);
   };
 
-  useEffect(() => {
-    async function fetchGroupRoles() {
-      try {
-        const result = await getUsersRolesService();
-        const groups = result?.roles?.map((element: any) => {
-          return {
-            label: element?.name,
-            value: element?.id,
-          };
-        });
-
-        setGroupClients(groups);
-      } catch (error) {
-        //message.error((error as Error)?.message);
-        // Handle the error if needed
-      }
-    }
-    fetchGroupRoles();
-  }, []);
+  
 
   return (
     <div>
@@ -159,7 +141,7 @@ const UserForm = (props: Props) => {
                       label="Group utilisateur:"
                       required
                     >
-                      <Select options={groupClients} />
+                      <Select options={rolesUsers} />
                     </Form.Item>
                   </Col>
 

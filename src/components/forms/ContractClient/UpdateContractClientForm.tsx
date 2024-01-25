@@ -73,7 +73,7 @@ const UpdateContractClientForm = (props: Props) => {
       message.success("Contract établissement modifié avec succès");
       resetAndClose();
     } catch (error) {
-      message.error((error as Error)?.message);
+      
     }
   };
 
@@ -91,7 +91,7 @@ const UpdateContractClientForm = (props: Props) => {
 
         setFractions(temp);
       } catch (error) {
-        //message.error((error as Error)?.message);
+        //
       }
     }
 

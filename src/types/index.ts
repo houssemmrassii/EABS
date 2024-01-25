@@ -46,10 +46,10 @@ export interface UserDataType {
   id: number;
   active?: boolean;
   email?: string;
-  role_id?: number;
   username?: string;
   gender?:string
   tel?:string
+  role?:string
 }
 export interface ClientDataType {
   key: number;

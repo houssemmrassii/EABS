@@ -1,5 +1,9 @@
 import React, { Key } from "react";
-import { getUserService, getUsersRolesService } from "@services/User";
+import {
+  deleteUserService,
+  getUserService,
+  getUsersRolesService,
+} from "@services/User";
 import { Badge, Popconfirm, Space, Table, message } from "antd";
 import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
 
@@ -13,33 +17,31 @@ import { UserDataType } from "@/types";
 import UpdateUserForm from "@/components/forms/User/UpdateUserForm";
 
 const User: React.FC = () => {
-  const { getColumnSearchProps, setSelectedEtabRecord } = useGlobal();
+  const { getColumnSearchProps } = useGlobal();
   const { tableData, setTableData } = useUserContext();
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<UserDataType | null>(null);
   const [refrech, setRefrech] = useState(false);
   const [rolesUsers, setRolesUsers] = useState<any>([]);
-  const Navigate = useNavigate();
-
 
   useEffect(() => {
-    async function fetchGroupEtab() {
+    async function fetchGroupUser() {
       try {
         const result = await getUsersRolesService();
         const groups = result?.roles?.map((element: any) => {
           return {
-            text: element?.name,
-            value: element?.name,
+            label: element?.name,
+            value: element?.id,
           };
         });
 
         setRolesUsers(groups);
       } catch (error) {
-        //message.error((error as Error)?.message);
+        //
       }
     }
 
-    fetchGroupEtab();
+    fetchGroupUser();
     const fetchData = async () => {
       try {
         const result = await getUserService();
@@ -57,7 +59,11 @@ const User: React.FC = () => {
   const handleDelete = async (key: number | undefined) => {
     if (tableData) {
       try {
-        setTimeout(() => {}, 500);
+        await deleteUserService(key as number);
+        setTimeout(() => {
+          const newData = tableData.filter((item) => item.key !== key);
+          setTableData(newData);
+        }, 500);
       } catch (error) {
         console.error("Error fetching data:", error);
         // Handle the error if needed
@@ -74,11 +80,11 @@ const User: React.FC = () => {
     },
     {
       title: "Groupe Utilisateur",
-      dataIndex: "group_data.name",
-      key: "groupName",
+      dataIndex: "role",
+      key: "role",
       filters: rolesUsers,
-      onFilter: (value, record) => record?.username === value,
-      render: (_, record: UserDataType) => <>{record?.username}</>,
+      onFilter: (value, record) => record?.role === value,
+      render: (_, record: UserDataType) => <>{record?.role}</>,
     },
     {
       title: "N° Tél",
@@ -95,7 +101,7 @@ const User: React.FC = () => {
     {
       title: "Statut",
       dataIndex: "active",
-      key: "status",
+      key: "active",
       filters: [
         {
           text: "Activé",
@@ -135,13 +141,18 @@ const User: React.FC = () => {
   ];
   return (
     <>
-      <UserForm refrech={refrech} setRefrech={setRefrech} />
+      <UserForm
+        refrech={refrech}
+        setRefrech={setRefrech}
+        rolesUsers={rolesUsers}
+      />
       {editing && (
         <UpdateUserForm
           recordData={editing}
           setEditing={setEditing}
           setRefrech={setRefrech}
           refrech={refrech}
+          rolesUsers={rolesUsers}
         />
       )}
       <Table
