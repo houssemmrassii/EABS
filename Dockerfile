@@ -4,11 +4,12 @@ FROM node:18-alpine3.17 as builder
 # Set the working directory inside the container to /app
 WORKDIR /app
 
-# Copy all files from the current directory to the /app directory in the container
-COPY . .
-
+COPY package.json .
 # Run the yarn install command to install dependencies
 RUN yarn install
+
+# Copy all files from the current directory to the /app directory in the container
+COPY . .
 
 # Run the yarn run build command to build the application
 RUN yarn run build
@@ -18,12 +19,6 @@ FROM nginx:alpine
 
 # Set the working directory inside the container to /usr/share/nginx/html
 WORKDIR /usr/share/nginx/html
-
-# Remove all existing files in the /usr/share/nginx/html directory
-RUN rm -rf ./*
-
-# Remove the default configuration files
-RUN rm -rf /usr/share/nginx/html/* && rm -rf /etc/nginx/conf.d/default.conf
 
 # Copy the custom default.conf file to the Nginx configuration directory
 COPY ./default.conf /etc/nginx/conf.d/default.conf
