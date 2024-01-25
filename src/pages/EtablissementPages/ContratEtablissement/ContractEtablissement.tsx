@@ -26,8 +26,7 @@ const ContactEtablissement = () => {
   const columns: ColumnsType<ContractEtablissementDataType> = [
     {
       title: "Contract Etab.",
-      //render: (_, record) => <>N/A</>,
-      render: () => <>N/A</>,
+      render: (_, record) => <>Contrat {record?.etablissement?.name}</>,
     },
     {
       title: "Etab.",
