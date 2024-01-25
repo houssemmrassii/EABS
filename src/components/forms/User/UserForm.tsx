@@ -16,8 +16,7 @@ import {
 
 import { BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
-import { getUsersRolesService, postUserService } from "@services/User";
-import { SelectTOptionType } from "@/types";
+import {  postUserService } from "@services/User";
 
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";

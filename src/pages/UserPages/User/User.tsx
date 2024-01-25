@@ -4,8 +4,8 @@ import {
   getUserService,
   getUsersRolesService,
 } from "@services/User";
-import { Badge, Popconfirm, Space, Table, message } from "antd";
-import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
+import { Badge, Popconfirm, Space, Table } from "antd";
+import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
 
 import { useUserContext } from "@/context/UserContext";
 

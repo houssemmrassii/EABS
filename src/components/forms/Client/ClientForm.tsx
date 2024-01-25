@@ -14,7 +14,7 @@ import {
   Space,
 } from "antd";
 
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
+import {  BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
 import { postClientService } from "@services/Client";
 import {

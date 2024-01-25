@@ -1,6 +1,6 @@
 import React, { Key } from "react";
 import { getClientService } from "@services/Client";
-import { Badge, Popconfirm, Space, Table, message } from "antd";
+import { Badge, Popconfirm, Space, Table } from "antd";
 import { DeleteOutlined, EditTwoTone, EyeOutlined } from "@ant-design/icons";
 import {
   deleteClientGroupsService,

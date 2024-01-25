@@ -11,7 +11,7 @@ import {
   message,
   Typography,
 } from "antd";
-import { PlusOutlined, BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
+import {  BuildOutlined, CaretLeftFilled } from "@ant-design/icons";
 
 import { postEtablissementGroupsService } from "@services/EtablissementGroup";
 import { useGroupEtablissementContext } from "@/context/GroupEtablissementContext";

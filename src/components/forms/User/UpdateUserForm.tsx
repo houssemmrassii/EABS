@@ -8,28 +8,19 @@ import {
   Select,
   Collapse,
   Divider,
-  message,
   Typography,
   Flex,
   Space,
 } from "antd";
 import {
-  PlusOutlined,
   BuildOutlined,
   CaretLeftFilled,
 } from "@ant-design/icons";
 
-import { getUsersRolesService, updateUserService } from "@services/User";
-import {
-  getDepartementsByRegion,
-  getFractions,
-  getRegions,
-  getVillesByDepartment,
-} from "@/services/Factory";
+import {  updateUserService } from "@services/User";
+
 import {
   UserDataType,
-  SelectTOptionType,
-  SelectTOptionTypeWithId,
 } from "@/types";
 
 import { PhoneInput } from "react-international-phone";
