@@ -9,4 +9,3 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "5565:80"
-    network_mode: bridge
