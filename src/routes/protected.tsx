@@ -80,6 +80,10 @@ const DetailsEtablissement = lazyLoad(
   () => import("@/pages/EtablissementPages/Etablissement/DetailsEtablissement"),
   "default"
 );
+const ReservationPage = lazyLoad(
+  () => import('@/pages/ReservationClient/Reservation/Reservation'),
+  "default"
+);
 
 const PrivateRoutes = () => {
   const token = localStorage.getItem("token");
@@ -95,6 +99,12 @@ const getChildrenRoutes = () => {
 
       if (decodedToken?.sub) {
         let privilges = decodedToken?.sub.privileges;
+        if (privilges.includes(import.meta.env.VITE_APP_GET_RESERVATION)) {
+          children.push({
+            path: "reservation",
+            element: ReservationPage ,
+          });
+        }
         if (privilges.includes(import.meta.env.VITE_APP_GET_ETABLISSEMENT)) {
           children.push({
             path: "etablissement",
